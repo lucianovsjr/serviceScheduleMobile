@@ -1,7 +1,18 @@
 import { createStore } from 'redux';
+import { persistStore, persistReducer } from 'redux-persist';
+import AsyncStorage from '@react-native-community/async-storage';
 
-import rootReducers from './modules/rootReducers';
+import rootReducer from './modules/rootReducer';
 
-const store = createStore(rootReducers);
+const persistConfig = {
+  key: 'serviceScheduleMobile',
+  storage: AsyncStorage,
+  whitelist: ['auth', 'user'],
+};
 
-export { store };
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+const store = createStore(persistedReducer);
+
+const persistor = persistStore(store);
+
+export { store, persistor };
