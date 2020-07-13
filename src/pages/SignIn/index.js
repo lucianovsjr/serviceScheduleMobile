@@ -49,7 +49,7 @@ function SignIn({ navigation }) {
             returnKeyType="send"
           />
 
-          <SubmitButton>
+          <SubmitButton onPress={handleSubmit}>
             <TextButton>Entrar</TextButton>
           </SubmitButton>
         </Form>

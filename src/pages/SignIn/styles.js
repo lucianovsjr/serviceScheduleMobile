@@ -1,6 +1,7 @@
-import { Platform, Pressable } from 'react-native';
+import { Platform } from 'react-native';
 
 import styled from 'styled-components/native';
+import { RectButton } from 'react-native-gesture-handler';
 
 import Input from '../../components/Input';
 
@@ -22,7 +23,7 @@ export const FormInput = styled(Input)`
   margin-bottom: 10px;
 `;
 
-export const SubmitButton = styled(Pressable)`
+export const SubmitButton = styled(RectButton)`
   margin-top: 5px;
 
   height: 46px;
