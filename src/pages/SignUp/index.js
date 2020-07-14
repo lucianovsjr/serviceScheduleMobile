@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react'
 import { Image } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import Background from '../../components/Background';
 import { Container, Form, FormInput, SubmitButton, TextButton, SignLink, SignLinkText } from './styles';
+import { userCreateRequest } from '../../store/modules/user/actions';
 
 import Logo from '../../assets/logo.png';
 
@@ -14,8 +16,12 @@ function SignUp({ navigation }) {
   const emailRef = useRef('');
   const passwordRef = useRef('');
 
+  const dispatch = useDispatch();
+
   function handleSubmit() {
-    navigation.navigate('SignIn')
+    const user = { name, email, password };
+
+    dispatch(userCreateRequest(user));
   }
 
   return (
@@ -43,6 +49,7 @@ function SignUp({ navigation }) {
             onChangeText={setEmail}
             onSubmitEditing={() => passwordRef.current.focus()}
             placeholder="E-mail"
+            ref={emailRef}
             returnKeyType="next"
             value={email}
           />
@@ -58,7 +65,7 @@ function SignUp({ navigation }) {
             returnKeyType="send"
           />
 
-          <SubmitButton onPress={() => handleSubmit}>
+          <SubmitButton onPress={handleSubmit}>
             <TextButton>Criar conta</TextButton>
           </SubmitButton>
         </Form>

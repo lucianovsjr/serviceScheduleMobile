@@ -1,6 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Image } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { signInRequest } from '../../store/modules/auth/actions';
 import Background from '../../components/Background';
 import { Container, Form, FormInput, SubmitButton, TextButton, SignLink, SignLinkText } from './styles';
 
@@ -9,11 +11,18 @@ import Logo from '../../assets/logo.png'
 function SignIn({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const reducers = useSelector(state => state);
 
   const passwordRef = useRef();
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(reducers);
+  }, [reducers]);
+
   function handleSubmit() {
-    console.log('teste');
+    dispatch(signInRequest(email, password));
   }
 
   return (

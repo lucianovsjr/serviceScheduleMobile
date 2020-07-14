@@ -1,4 +1,4 @@
-import { ACTION_SIGN_IN_REQUEST } from './actions';
+import { ACTION_SIGN_IN_SUCCESS } from './actions';
 
 const INITIAL_STATE = {
   token: '',
@@ -7,9 +7,9 @@ const INITIAL_STATE = {
 };
 
 function auth(state = INITIAL_STATE, action) {
-  switch (action) {
-    case ACTION_SIGN_IN_REQUEST:
-      return { ...state, signed: true };
+  switch (action.type) {
+    case ACTION_SIGN_IN_SUCCESS:
+      return { ...state, signed: true, token: action.payload.token };
     default:
       return state
   }
