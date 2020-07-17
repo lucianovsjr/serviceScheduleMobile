@@ -1,16 +1,31 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createBottomTabNavigator();
 
+import CreateSchedule from '../pages/CreateSchedule';
 import MySchedule from '../pages/MySchedule';
 import SelectService from '../pages/SelectService';
 import Profile from '../pages/Profile';
 
 function AppRoutes() {
+  const provider = useSelector(state => state.user.provider);
+
   return(
     <Tab.Navigator initialRoute="MySchedule">
+
+      { provider &&
+        <Tab.Screen
+          name="CreateSchedule"
+          component={CreateSchedule}
+          options={{
+            title: 'Criar agenda',
+            tabBarIcon: ({color, size}) => (<Icon name="today" color={color} size={size} />)
+          }}
+        />
+      }
       <Tab.Screen
         name="MySchedule"
         component={MySchedule}
