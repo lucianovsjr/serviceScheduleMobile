@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { userUpdateRequest } from '../../store/modules/user/actions';
+import { signOut } from '../../store/modules/auth/actions';
 
 import Background from '../../components/Background';
 import { Container, Form, FormInput, SubmitButton, TextButton, LogoutButton } from './styles';
@@ -23,7 +24,7 @@ function Profile() {
   }
 
   function handleLogout() {
-    console.log('Logout');
+    dispatch(signOut());
   }
 
   return (

@@ -1,4 +1,4 @@
-import { ACTION_SIGN_IN_SUCCESS } from '../auth/actions';
+import { ACTION_SIGN_IN_SUCCESS, ACTION_SIGN_OUT } from '../auth/actions';
 import { ACTION_USER_UPDATE_SUCCESS } from '../user/actions';
 
 const INITIAL_STATE = {
@@ -12,6 +12,12 @@ function user(state = INITIAL_STATE, action) {
       return {
         name: action.payload.user.name,
         email: action.payload.user.email
+      };
+
+    case ACTION_SIGN_OUT:
+      return {
+        name: '',
+        email: ''
       };
 
     default:
