@@ -32,7 +32,6 @@ function* userUpdate(action) {
     yield put(userUpdateSuccess(response.data));
   } catch (error) {
 
-    console.log(error.message);
     yield put(userUpdateFailed(error.message));
   }
 }

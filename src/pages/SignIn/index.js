@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,15 +11,10 @@ import Logo from '../../assets/logo.png'
 function SignIn({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const reducers = useSelector(state => state);
 
   const passwordRef = useRef();
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log(reducers);
-  }, [reducers]);
 
   function handleSubmit() {
     dispatch(signInRequest(email, password));
