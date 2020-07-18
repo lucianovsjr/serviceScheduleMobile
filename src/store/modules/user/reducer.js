@@ -8,8 +8,6 @@ const INITIAL_STATE = {
 };
 
 function user(state = INITIAL_STATE, action) {
-  console.log(action);
-
   switch (action.type) {
     case ACTION_SIGN_IN_SUCCESS:
       return {
