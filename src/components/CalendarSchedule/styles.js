@@ -29,7 +29,7 @@ export const HourList = styled.FlatList.attrs({
   padding: 0 20px;
 `;
 
-export const CardHour = styled(RectButton)`
+export const ButtonCardHour = styled(RectButton)`
   background: #fff;
   border-radius: 4px;
   padding: 20px;
@@ -37,7 +37,7 @@ export const CardHour = styled(RectButton)`
   opacity: ${props => props.enabled ? 1 : 0.6};
 
   align-items: center;
-  margin: 0 10px 20px;
+  margin: 0 10px 15px;
 `;
 
 export const Title = styled.Text`

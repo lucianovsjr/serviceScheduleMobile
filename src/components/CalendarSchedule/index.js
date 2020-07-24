@@ -1,36 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-import { format, isBefore, addMinutes } from 'date-fns';
+import { ContainerHeader, DayButton, DayText, HourList, ButtonCardHour, Title } from './styles';
 
-import { ContainerHeader, DayButton, DayText, HourList, CardHour, Title } from './styles';
-
-function CalendarSchedule({ dateStart, dateEnd, serviceTime, loadingCalendar, setLoadingCalendar }) {
-  const [hours, setHours] = useState([]);
-
-  useEffect(() => {
-    if (loadingCalendar) {
-      handleLoading();
-      setLoadingCalendar(false);
-    }
-  }, [loadingCalendar])
-
-  function handleLoading() {
-    let datasHours = [];
-    let dateCard = dateStart;
-    const timeMinutes = parseInt(serviceTime);
-
-    while (isBefore(dateCard, dateEnd)) {
-      datasHours.push({
-        time: format(dateCard, 'HH:mm'),
-        available: true,
-        value: ''
-      });
-
-      dateCard = addMinutes(dateCard, timeMinutes);
-    }
-
-    setHours(datasHours);
-  }
+function CalendarSchedule({
+  dateStart,
+  dateEnd,
+  serviceTime,
+  loadingCalendar,
+  setLoadingCalendar,
+  hours,
+  setHours
+}) {
 
   return (
     <>
@@ -62,9 +42,9 @@ function CalendarSchedule({ dateStart, dateEnd, serviceTime, loadingCalendar, se
       data={hours}
       keyExtractor={item => item.time}
       renderItem={({item}) => (
-        <CardHour enabled={item.available} onPress={() => {}}>
+        <ButtonCardHour enabled={item.available}>
           <Title>{item.time}</Title>
-        </CardHour>
+        </ButtonCardHour>
       )}
     />
     </>
