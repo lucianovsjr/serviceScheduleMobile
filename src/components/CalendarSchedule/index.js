@@ -3,13 +3,7 @@ import React from 'react';
 import { ContainerHeader, DayButton, DayText, HourList, ButtonCardHour, Title } from './styles';
 
 function CalendarSchedule({
-  dateStart,
-  dateEnd,
-  serviceTime,
-  loadingCalendar,
-  setLoadingCalendar,
   hours,
-  setHours
 }) {
 
   return (

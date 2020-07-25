@@ -6,7 +6,7 @@ import Background from '../../components/Background';
 
 import { Container, ProviderList, ButtonCardProvider, Avatar, Title } from './styles';
 
-function SelectService() {
+function SelectProvider({navigation}) {
   const [providers, setProviders] = useState([]);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ function SelectService() {
           data={providers}
           keyExtractor={item => item.id}
           renderItem={({item}) => (
-            <ButtonCardProvider key={item.id}>
+            <ButtonCardProvider key={item.id} onPress={() => navigation.navigate('SelectAppointment', { provider: item })}>
               <Avatar
                 source={{uri: `https://api.adorable.io/avatars/40/${item.name}.png`}}
               />
@@ -45,4 +45,4 @@ function SelectService() {
   );
 }
 
-export default SelectService;
+export default SelectProvider;

@@ -7,8 +7,10 @@ const Tab = createBottomTabNavigator();
 
 import CreateSchedule from '../pages/CreateSchedule';
 import MySchedule from '../pages/MySchedule';
-import SelectService from '../pages/SelectService';
+import SelectProvider from '../pages/SelectProvider';
 import Profile from '../pages/Profile';
+
+import SelectRoutes from '../routes/SelectRoutes';
 
 function AppRoutes() {
   const provider = useSelector(state => state.user.provider);
@@ -35,8 +37,8 @@ function AppRoutes() {
         }}
       />
       <Tab.Screen
-        name="SelectService"
-        component={SelectService}
+        name="Select"
+        component={SelectRoutes}
         options={{
           title: 'Agendar',
           tabBarIcon: ({color, size}) => (<Icon name="add-circle-outline" color={color} size={size} />)

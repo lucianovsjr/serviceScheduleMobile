@@ -68,13 +68,7 @@ function CreateSchedule() {
         />
         <Separator />
         <CalendarSchedule
-          dateStart={dateStart}
-          dateEnd={dateEnd}
-          serviceTime={serviceTime}
-          loadingCalendar={loadingCalendar}
-          setLoadingCalendar={setLoadingCalendar}
           hours={hours}
-          setHours={setHours}
         />
       </Container>
     </Background>
