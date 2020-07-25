@@ -27,9 +27,9 @@ function CreateSchedule() {
   async function iniTemplateIsCreate() {
     const response = await api.get('/templates');
 
-    const { id, office_hours_start, office_hours_end, service_time } = response.data;
+    if (response.status === 200) {
+      const { id, office_hours_start, office_hours_end, service_time } = response.data;
 
-    if (id) {
       setTemplateId(id);
       setIsTemplate(true);
 
@@ -39,13 +39,15 @@ function CreateSchedule() {
 
       const responseHours = await api.get('/appointments', { params: { templateId: id } });
 
-      setHours(responseHours.data.map(
-        (hour) => ({
-          date: parseISO(hour.date),
-          time: format(parseISO(hour.date), 'HH:mm'),
-          available: true
-        })
-      ));
+      if (responseHours.status === 200) {
+        setHours(responseHours.data.map(
+          (hour) => ({
+            date: parseISO(hour.date),
+            time: format(parseISO(hour.date), 'HH:mm'),
+            available: true
+          })
+        ));
+      }
     }
   }
 
