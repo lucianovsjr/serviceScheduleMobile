@@ -36,7 +36,10 @@ function CalendarSchedule({
       data={hours}
       keyExtractor={item => item.time}
       renderItem={({item}) => (
-        <ButtonCardHour enabled={item.available}>
+        <ButtonCardHour
+          enabled={item.available}
+          onPress={item.click}
+        >
           <Title>{item.time}</Title>
         </ButtonCardHour>
       )}

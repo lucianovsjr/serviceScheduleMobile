@@ -42,9 +42,11 @@ function CreateSchedule() {
       if (responseHours.status === 200) {
         setHours(responseHours.data.map(
           (hour) => ({
+            id: hour.id,
             date: parseISO(hour.date),
             time: format(parseISO(hour.date), 'HH:mm'),
-            available: true
+            available: true,
+            click: () => {},
           })
         ));
       }

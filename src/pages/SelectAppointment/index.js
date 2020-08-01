@@ -15,22 +15,33 @@ function SelectAppointment({ route }) {
 
   const { provider } = route.params;
 
-  useEffect(() => {
-    async function loadingHours() {
-      const response = await api.get('/select-appointments', { params: { providerId: provider.id } })
+  async function handleSelectAppointment(id) {
+    const response = await api.put('/select-appointments', { params: { appointmentId: id } })
 
-      if (response.status === 200) {
-        setHours(response.data.map(
-          (hour) => ({
-            date: parseISO(hour.date),
-            time: format(parseISO(hour.date), 'HH:mm'),
-            available: true
-          })
-        ));
-      }
+    if (response.status === 200) {
+      loadingHours();
     }
+  }
+
+  useEffect(() => {
     loadingHours();
   }, []);
+
+  async function loadingHours() {
+    const response = await api.get('/select-appointments', { params: { providerId: provider.id } })
+
+    if (response.status === 200) {
+      setHours(response.data.map(
+        (hour) => ({
+          id: hour.id,
+          date: parseISO(hour.date),
+          time: format(parseISO(hour.date), 'HH:mm'),
+          available: hour.available,
+          click: () => handleSelectAppointment(hour.id),
+        })
+      ));
+    }
+  }
 
   return (
     <Background>

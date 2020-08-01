@@ -29,7 +29,9 @@ export const HourList = styled.FlatList.attrs({
   padding: 0 20px;
 `;
 
-export const ButtonCardHour = styled(RectButton)`
+export const ButtonCardHour = styled(RectButton).attrs((props) => ({
+  disabled: (props.enabled ? false : true),
+}))`
   background: #fff;
   border-radius: 4px;
   padding: 20px;
