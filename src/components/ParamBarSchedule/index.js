@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Platform} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { format, isBefore, addMinutes } from 'date-fns';
+import { format, isBefore, addMinutes, startOfWeek, endOfWeek, set, addDays, getDay } from 'date-fns';
 
 import api from '../../services/api';
 
@@ -31,10 +31,10 @@ function TimePicker({ name, show, setShow, date, setDate, setLoadingCalendar }) 
 }
 
 function ParamBarSchedule({
-  dateStart,
-  setDateStart,
-  dateEnd,
-  setDateEnd,
+  hourStart,
+  sethourStart,
+  hourEnd,
+  sethourEnd,
   serviceTime,
   setServiceTime,
   setLoadingCalendar,
@@ -45,24 +45,53 @@ function ParamBarSchedule({
   const [showStart, setShowStart] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
 
-  const dateStartFormat = useMemo(() => format(dateStart, 'HH:mm'));
-  const dateEndFormat = useMemo(() => format(dateEnd, 'HH:mm'));
+  const hourStartFormat = useMemo(() => format(hourStart, 'HH:mm'));
+  const hourEndFormat = useMemo(() => format(hourEnd, 'HH:mm'));
 
   function handleLoading() {
-    let datasHours = [];
-    let dateCard = dateStart;
     const timeMinutes = parseInt(serviceTime);
+    const dateStart = startOfWeek(hourStart);
+    const dateEnd = endOfWeek(hourStart);
+
+    let datasHours = [];
+    let hourStartDayCard = set(
+      dateStart,
+      {
+        hours: hourStart.getHours(),
+        minutes: hourStart.getMinutes(),
+        seconds: 0,
+        milliseconds: 0,
+      }
+    );
+    let hourEndDayCard = set(
+      dateStart,
+      {
+        hours: hourEnd.getHours(),
+        minutes: hourEnd.getMinutes(),
+        seconds: 0,
+        milliseconds: 1,
+      }
+    );
+    let hourCard = hourStartDayCard;
 
     setLoadingCalendar(true);
 
-    while (isBefore(dateCard, dateEnd)) {
-      datasHours.push({
-        date: dateCard,
-        time: format(dateCard, 'HH:mm'),
-        available: true
-      });
+    while (isBefore(hourStartDayCard, dateEnd)) {
+      while (isBefore(hourCard, hourEndDayCard)) {
+        datasHours.push({
+          date: hourCard,
+          time: format(hourCard, 'HH:mm'),
+          available: true,
+          click: () => {},
+          day: getDay(hourCard),
+        });
 
-      dateCard = addMinutes(dateCard, timeMinutes);
+        hourCard = addMinutes(hourCard, timeMinutes);
+      }
+
+      hourStartDayCard = addDays(hourStartDayCard, 1);
+      hourEndDayCard = addDays(hourEndDayCard, 1);
+      hourCard = hourStartDayCard;
     }
 
     setHours(datasHours);
@@ -72,7 +101,7 @@ function ParamBarSchedule({
   async function handlePublished() {
     const datasHours = hours.map(hour => ({ date: hour.date }));
 
-    const responseTemplate = await api.post('/templates', { serviceTime, dateStart, dateEnd });
+    const responseTemplate = await api.post('/templates', { serviceTime, hourStart, hourEnd });
     const { id: templateId } = responseTemplate.data;
 
     const responseHours = await api.post('/appointments', { datasHours, templateId });
@@ -89,25 +118,25 @@ function ParamBarSchedule({
       <Content>
         <Text>Horário: </Text>
         <Hours onPress={() => !isTemplate && setShowStart(!showStart)}>
-          <Text>{dateStartFormat}</Text>
+          <Text>{hourStartFormat}</Text>
         </Hours>
         <TimePicker
-          name="dateStart"
+          name="hourStart"
           show={showStart}
           setShow={setShowStart}
-          date={dateStart}
-          setDate={setDateStart}
+          date={hourStart}
+          setDate={sethourStart}
         />
 
         <Hours onPress={() => !isTemplate && setShowEnd(!showEnd)}>
-          <Text>{dateEndFormat}</Text>
+          <Text>{hourEndFormat}</Text>
         </Hours>
         <TimePicker
-          name="dateEnd"
+          name="hourEnd"
           show={showEnd}
           setShow={setShowEnd}
-          date={dateEnd}
-          setDate={setDateEnd}
+          date={hourEnd}
+          setDate={sethourEnd}
         />
 
         <ServiceTimeText>Tempo: </ServiceTimeText>

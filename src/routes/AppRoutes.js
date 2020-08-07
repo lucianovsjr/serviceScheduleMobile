@@ -5,12 +5,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createBottomTabNavigator();
 
-import CreateSchedule from '../pages/CreateSchedule';
 import MySchedule from '../pages/MySchedule';
-import SelectProvider from '../pages/SelectProvider';
 import Profile from '../pages/Profile';
 
 import SelectRoutes from '../routes/SelectRoutes';
+import CreateScheduleRoutes from '../routes/CreateScheduleRoutes';
 
 function AppRoutes() {
   const provider = useSelector(state => state.user.provider);
@@ -21,7 +20,7 @@ function AppRoutes() {
       { provider &&
         <Tab.Screen
           name="CreateSchedule"
-          component={CreateSchedule}
+          component={CreateScheduleRoutes}
           options={{
             title: 'Criar agenda',
             tabBarIcon: ({color, size}) => (<Icon name="today" color={color} size={size} />)

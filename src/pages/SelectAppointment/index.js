@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { parseISO, format } from 'date-fns';
+import { parseISO, format, getDay } from 'date-fns';
 
 import api from '../../services/api';
 
@@ -38,6 +38,7 @@ function SelectAppointment({ route }) {
           time: format(parseISO(hour.date), 'HH:mm'),
           available: hour.available,
           click: () => handleSelectAppointment(hour.id),
+          day: getDay(parseISO(hour.date)),
         })
       ));
     }

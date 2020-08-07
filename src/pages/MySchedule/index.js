@@ -15,7 +15,6 @@ function MySchedule() {
       const response = await api.get('my-appointments');
 
       if (response.status === 200) {
-        console.log(response.data);
         setMyHours(
           response.data.map((hour) => ({
             id: hour.id,

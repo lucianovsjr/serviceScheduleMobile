@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, getDay } from 'date-fns';
 
 import api from '../../services/api';
 
@@ -10,34 +10,29 @@ import Separator from '../../components/Separator';
 import CalendarSchedule from '../../components/CalendarSchedule';
 import { Container } from './styles';
 
-function CreateSchedule() {
-  const [dateStart, setDateStart] = useState(new Date());
-  const [dateEnd, setDateEnd] = useState(new Date());
+function CreateSchedule({ route }) {
+  const [hourStart, sethourStart] = useState(new Date());
+  const [hourEnd, sethourEnd] = useState(new Date());
   const [serviceTime, setServiceTime] = useState('60');
   const [loadingCalendar, setLoadingCalendar] = useState(false);
 
   const [hours, setHours] = useState([]);
-  const [templateId, setTemplateId] = useState(0);
   const [isTemplate, setIsTemplate] = useState(false);
+
+  const { template } = route.params;
 
   useEffect(() => {
     iniTemplateIsCreate();
   }, []);
 
   async function iniTemplateIsCreate() {
-    const response = await api.get('/templates');
+    if (template) {
+      setIsTemplate(!!template.id);
+      sethourStart(parseISO(template.office_hours_start));
+      sethourEnd(parseISO(template.office_hours_end));
+      setServiceTime(template.time);
 
-    if (response.status === 200) {
-      const { id, office_hours_start, office_hours_end, service_time } = response.data;
-
-      setTemplateId(id);
-      setIsTemplate(true);
-
-      setDateStart(parseISO(office_hours_start));
-      setDateEnd(parseISO(office_hours_end));
-      setServiceTime(service_time.toString());
-
-      const responseHours = await api.get('/appointments', { params: { templateId: id } });
+      const responseHours = await api.get('/appointments', { params: { templateId: template.id } });
 
       if (responseHours.status === 200) {
         setHours(responseHours.data.map(
@@ -47,6 +42,7 @@ function CreateSchedule() {
             time: format(parseISO(hour.date), 'HH:mm'),
             available: true,
             click: () => {},
+            day: getDay(parseISO(hour.date)),
           })
         ));
       }
@@ -57,10 +53,10 @@ function CreateSchedule() {
     <Background>
       <Container>
         <ParamBarSchedule
-          dateStart={dateStart}
-          setDateStart={setDateStart}
-          dateEnd={dateEnd}
-          setDateEnd={setDateEnd}
+          hourStart={hourStart}
+          sethourStart={sethourStart}
+          hourEnd={hourEnd}
+          sethourEnd={sethourEnd}
           serviceTime={serviceTime}
           setServiceTime={setServiceTime}
           setLoadingCalendar={setLoadingCalendar}
