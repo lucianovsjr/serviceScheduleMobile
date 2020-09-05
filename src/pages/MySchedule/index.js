@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
+
 import { parseISO, format } from 'date-fns';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '../../services/api';
 
 import Background from '../../components/Background';
+import { ContainerFullHorizontal } from '../../components/Container';
+import List, { Line, LineRow, LineText, LineButton, LineAvatar } from '../../components/List';
 
-import { Container, MyHourList, ButtonCardHour, Title } from './styles';
+import { LineColProvider } from './styles';
 
 function MySchedule() {
   const [myHours, setMyHours] = useState([]);
+
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     async function loadingMyHours() {
@@ -17,29 +25,82 @@ function MySchedule() {
       if (response.status === 200) {
         setMyHours(
           response.data.map((hour) => ({
+            ...hour,
             id: hour.id,
-            time: format(parseISO(hour.date), 'dd/MM/yyyy HH:mm'),
+            dateFormat: format(parseISO(hour.date), 'dd/MM/yyyy'),
+            timeFormat: format(parseISO(hour.date), 'HH:mm'),
           }))
         );
       }
     }
 
-    loadingMyHours();
-  }, []);
+    if (isFocused) loadingMyHours();
+    else setMyHours([]);
+  }, [isFocused]);
+
+  function handleCancel(id) {
+    Alert.alert(
+      'Agendamento',
+      'Deseja cancelar esse agendamento?',
+      [
+        {
+          text: 'Não',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: 'Sim',
+          onPress: async () => {
+            const response = await api.put('select-appointments-month', { id, newStatus: 'canceled' });
+
+            if (response.status === 200)
+              setMyHours(myHours.filter((hour) => hour.id !== id));
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
 
   return (
     <Background>
-      <Container>
-        <MyHourList
+      <ContainerFullHorizontal>
+        <List
           data={myHours}
-          keyExtractor={item => item.time}
+          keyExtractor={item => String(item.id)}
           renderItem={({item}) => (
-            <ButtonCardHour>
-              <Title>{item.date}{item.time}</Title>
-            </ButtonCardHour>
+            <Line
+              key={String(item.id)}
+              height={80}
+            >
+              <LineRow>
+                <LineAvatar
+                  source={{uri: `https://api.adorable.io/avatars/40/${item.name}.png`}}
+                />
+
+                <LineColProvider>
+                  <LineText width={180} fontSize={16} bold>
+                    {item.provider.name}
+                  </LineText>
+                  <LineText fontSize={14}>
+                    {item.timeFormat}
+                  </LineText>
+                  <LineText fontSize={12}>
+                    {item.dateFormat}
+                  </LineText>
+                </LineColProvider>
+              </LineRow>
+
+              <LineButton color="#ff4d4d" onPress={() => handleCancel(item.id)}>
+                <LineText fontSize={16} marginRight={5} fontColor="#fff">
+                  Cancelar
+                </LineText>
+                <Icon name="clear" size={25} color="#fff"/>
+              </LineButton>
+            </Line>
           )}
         />
-      </Container>
+      </ContainerFullHorizontal>
     </Background>
   );
 }

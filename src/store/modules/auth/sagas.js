@@ -12,8 +12,21 @@ function* signIn(action) {
 
     const { user, token } = response.data;
 
+    api.defaults.headers.Authorization = `Bearer ${token}`;
 
-    yield put(signInSuccess(user, token));
+    const responseUser = yield call(api.get, 'users', {});
+
+    const { name, fantasyName, profession } = responseUser.data;
+
+    yield put(signInSuccess(
+      {
+        name,
+        fantasyName,
+        profession,
+        ...user
+      },
+      token
+    ));
   } catch (error) {
 
     yield put(signInFailed(error.message));

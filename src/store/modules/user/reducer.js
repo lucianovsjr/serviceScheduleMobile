@@ -5,6 +5,8 @@ const INITIAL_STATE = {
   name: '',
   email: '',
   provider: true,
+  fantasyName: '',
+  profession: ''
 };
 
 function user(state = INITIAL_STATE, action) {
@@ -14,11 +16,15 @@ function user(state = INITIAL_STATE, action) {
         name: action.payload.user.name,
         email: action.payload.user.email,
         provider: action.payload.user.provider,
+        fantasyName: action.payload.user.fantasyName,
+        profession: action.payload.user.profession,
       };
 
     case ACTION_USER_UPDATE_SUCCESS:
       return {
         name: action.payload.user.name,
+        fantasyName: action.payload.user.fantasyName,
+        profession: action.payload.user.profession,
         ...state
       };
 

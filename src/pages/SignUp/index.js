@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { Image } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import Background from '../../components/Background';
+import Background from '../../components/BackgroundSign';
 import { Container, Form, FormInput, SubmitButton, TextButton, SignLink, SignLinkText } from './styles';
 import { userCreateRequest } from '../../store/modules/user/actions';
 
@@ -27,7 +27,7 @@ function SignUp({ navigation }) {
   return (
     <Background>
       <Container>
-        <Image style={{ width: 130, height: 130 }} source={Logo} />
+        <Image style={{ width: 80, height: 80 }} source={Logo} />
 
         <Form>
           <FormInput

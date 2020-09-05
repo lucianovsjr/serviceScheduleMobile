@@ -1,0 +1,196 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { Alert } from 'react-native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+import api from '../../services/api';
+
+import Background from '../../components/Background';
+import { ContainerFullHorizontal } from '../../components/Container';
+import List, { ListHorizontal, Line, LineCol, LineRow, LineText, LineButton } from '../../components/List';
+import { CardColumn } from '../../components/Card';
+
+import {
+  ContainerHeader,
+  ContainerList,
+  ButtonCardMonth,
+  TextMonth,
+  TitleVacancies,
+  TextVacancies,
+  AddSchedule
+} from './styles';
+
+export default function MyCalendar() {
+  const INIT_SELECTED_MONTH = '0'
+
+  const [myAppointments, setMyAppointments] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(INIT_SELECTED_MONTH);
+
+  const listBackgroundColor = useMemo(() =>
+    appointments.length > 0 ? '#fff' : '#eee'
+  , [appointments]);
+
+  const isFocused = useIsFocused();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    async function loading() {
+      const response = await api.get('my-schedules-months');
+
+      if (response.status === 200) {
+        setMyAppointments(response.data);
+      }
+    }
+
+    if (isFocused) loading();
+  }, [isFocused]);
+
+  async function loadingAppointments(year, month, idDate) {
+
+    if (selectedMonth !== idDate) {
+      const response = await api.get('my-appointments-months', { params: { year, month } });
+      const draftEnd = {};
+      var draftAppointment = {};
+      var draftDate = null;
+
+      if (response.status === 200) {
+        draftAppointment = response.data.map((appointment) => {
+            let isTitle = draftDate !== appointment.dateFormat;
+
+            if (isTitle) draftDate = appointment.dateFormat;
+            draftEnd[draftDate] = appointment.id;
+
+            return {
+              ...appointment,
+              type: isTitle ? 'title' : 'row',
+            }
+        });
+
+        setAppointments(draftAppointment.map((appointment) => {
+          return {
+            ...appointment,
+            isEnd: draftEnd[appointment.dateFormat] === appointment.id,
+          };
+        }));
+        setSelectedMonth(idDate);
+      }
+    } else {
+      setAppointments([]);
+      setSelectedMonth(INIT_SELECTED_MONTH);
+    }
+  }
+
+  function handleCancel(id) {
+    Alert.alert(
+      'Agendamento',
+      'Deseja cancelar esse agendamento?',
+      [
+        {
+          text: 'Não',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: 'Sim',
+          onPress: async () => {
+            const response = await api.put('select-appointments-month', { id, newStatus: 'canceled' });
+
+            if (response.status === 200)
+              setAppointments(appointments.map((appointment) => {
+                return {
+                  ...appointment,
+                  status: appointment.id === id ? 'available' : appointment.status
+                }
+              }));
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
+  function navigateAppointment(idAppointment) {
+    navigation.navigate('MyCalendarAppointment', { idAppointment })
+  }
+
+  return (
+    <Background>
+      <ContainerFullHorizontal topZero>
+        <ContainerHeader>
+          <ListHorizontal
+            data={myAppointments}
+            keyExtractor={item => item.date}
+            renderItem={({item}) => (
+              <ButtonCardMonth
+                key={item.date}
+                onPress={() => loadingAppointments(item.year, item.month, item.date)}
+                selected={selectedMonth===item.date}
+              >
+                <TextMonth>{item.dateFormat}</TextMonth>
+                <CardColumn>
+                  <TitleVacancies>Vagas</TitleVacancies>
+                  <TextVacancies>{item.vacancies_morning} Manhã</TextVacancies>
+                  <TextVacancies>{item.vacancies_afternoon} Tarde</TextVacancies>
+                  <TextVacancies>{item.vacancies_night} Noite</TextVacancies>
+                </CardColumn>
+              </ButtonCardMonth>
+            )}
+            height={'100'}
+          />
+        </ContainerHeader>
+
+        <ContainerList>
+          <List
+            data={appointments}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({item}) => (
+              <Line>
+                <LineCol>
+                  <LineText fontSize={16} marginLeft={15} fontColor="#000">
+                    {item.hourFormat}
+                  </LineText>
+                  <LineText fontSize={14} marginLeft={15} fontColor="#000">
+                    {item.dayWeek}
+                  </LineText>
+                  <LineText fontSize={10} marginLeft={15} fontColor="#000">
+                    {item.dateFormat}
+                  </LineText>
+                </LineCol>
+                <LineText fontSize={16} marginLeft={15} fontColor="#000">
+                    {item.looseClient}
+                  </LineText>
+                {item.status === 'available'
+                  ? <>
+                      <LineButton
+                      color="#00cc66"
+                        onPress={() => navigateAppointment(item.id)}>
+                        <LineText fontSize={16} marginRight={5} fontColor="#fff">
+                          Agendar
+                        </LineText>
+                        <Icon name="done" size={25} color="#fff"/>
+                      </LineButton>
+                    </>
+                  : <>
+                      <LineButton color="#ff4d4d" onPress={() => handleCancel(item.id)}>
+                        <LineText fontSize={16} marginRight={5} fontColor="#fff">
+                          Cancelar
+                        </LineText>
+                        <Icon name="clear" size={25} color="#fff"/>
+                      </LineButton>
+                    </>
+                }
+              </Line>
+            )}
+            style={{flex:1, backgroundColor: listBackgroundColor}}
+          />
+
+          {selectedMonth === INIT_SELECTED_MONTH
+            &&  <AddSchedule onPress={() => navigateAppointment()}/>}
+        </ContainerList>
+
+      </ContainerFullHorizontal>
+    </Background>
+  )
+}

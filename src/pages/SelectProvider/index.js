@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 
 import api from '../../services/api';
 
 import Background from '../../components/Background';
+import Container from '../../components/Container';
+import List from '../../components/List';
+import { ButtonCard, CardAvatar, CardTitle1, CardText1 } from '../../components/Card';
 
-import { Container, ProviderList, ButtonCardProvider, Avatar, Title } from './styles';
+import { CardColumnProvider } from './styles';
 
 function SelectProvider({navigation}) {
   const [providers, setProviders] = useState([]);
+  const [find, setFind] = useState('');
+
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     async function loadingProviders() {
@@ -22,22 +29,34 @@ function SelectProvider({navigation}) {
         ));
       }
     }
-    loadingProviders();
-  }, [])
+
+    if (isFocused) loadingProviders();
+    else setProviders([]);
+  }, [isFocused])
 
   return (
     <Background>
       <Container>
-        <ProviderList
+        <List
           data={providers}
           keyExtractor={item => item.id}
           renderItem={({item}) => (
-            <ButtonCardProvider key={item.id} onPress={() => navigation.navigate('SelectAppointment', { provider: item })}>
-              <Avatar
+            <ButtonCard key={item.id} onPress={
+                () => navigation.navigate('SelectProviderMonth',
+                  {
+                    providerId: item.id,
+                    name: item.name
+                  }
+                )
+              }>
+              <CardAvatar
                 source={{uri: `https://api.adorable.io/avatars/40/${item.name}.png`}}
               />
-              <Title> {item.name} </Title>
-            </ButtonCardProvider>
+              <CardColumnProvider>
+                <CardTitle1>{item.fantasyName}</CardTitle1>
+                <CardText1>{item.profession}</CardText1>
+              </CardColumnProvider>
+            </ButtonCard>
           )}
         />
       </Container>

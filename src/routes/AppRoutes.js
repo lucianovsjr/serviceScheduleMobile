@@ -5,16 +5,18 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createBottomTabNavigator();
 
-import MySchedule from '../pages/MySchedule';
-import Profile from '../pages/Profile';
+import MyCalendar from '../pages/MyCalendar';
 
-import SelectRoutes from '../routes/SelectRoutes';
-import CreateScheduleRoutes from '../routes/CreateScheduleRoutes';
+import SelectRoutes from './SelectRoutes';
+import MyCalendarRoutes from './MyCalendarRoutes';
+import ProfileRoutes from './ProfileRoutes';
+import CreateScheduleRoutes from './CreateScheduleRoutes';
+import MyScheduleRoutes from './MyScheduleRoutes';
 
 function AppRoutes() {
   const provider = useSelector(state => state.user.provider);
 
-  return(
+  return (
     <Tab.Navigator initialRoute="MySchedule">
 
       { provider &&
@@ -22,17 +24,25 @@ function AppRoutes() {
           name="CreateSchedule"
           component={CreateScheduleRoutes}
           options={{
-            title: 'Criar agenda',
+            title: 'Gerenciar',
             tabBarIcon: ({color, size}) => (<Icon name="today" color={color} size={size} />)
           }}
         />
       }
       <Tab.Screen
-        name="MySchedule"
-        component={MySchedule}
+        name="MyCalendar"
+        component={MyCalendarRoutes}
         options={{
           title: 'Minha agenda',
-          tabBarIcon: ({color, size}) => (<Icon name="today" color={color} size={size} />)
+          tabBarIcon: ({color, size}) => (<Icon name="date-range" color={color} size={size} />)
+        }}
+      />
+      <Tab.Screen
+        name="MyScheduleRoutes"
+        component={MyScheduleRoutes}
+        options={{
+          title: 'Agendamentos',
+          tabBarIcon: ({color, size}) => (<Icon name="event-available" color={color} size={size} />)
         }}
       />
       <Tab.Screen
@@ -45,7 +55,7 @@ function AppRoutes() {
       />
       <Tab.Screen
         name="Profile"
-        component={Profile}
+        component={ProfileRoutes}
         options={{
           title: 'Perfil',
           tabBarIcon: ({color, size}) => (<Icon name="person" color={color} size={size} />)

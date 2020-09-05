@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { Image } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
+import Background from '../../components/BackgroundSign';
 import { signInRequest } from '../../store/modules/auth/actions';
-import Background from '../../components/Background';
 import { Container, Form, FormInput, SubmitButton, TextButton, SignLink, SignLinkText } from './styles';
 
 import Logo from '../../assets/logo.png'
@@ -24,7 +24,7 @@ function SignIn({ navigation }) {
     <Background>
       <Container>
         <Image
-          style={{width: 130, height: 130}}
+          style={{width: 80, height: 80}}
           source={Logo}
         />
 

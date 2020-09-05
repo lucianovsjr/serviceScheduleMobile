@@ -1,76 +1,86 @@
 import React, { useState, useEffect } from 'react';
 
-import { format, parseISO, getDay } from 'date-fns';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+
+import { parseISO, format } from 'date-fns';
+
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '../../services/api';
 
 import Background from '../../components/Background';
-import ParamBarSchedule from '../../components/ParamBarSchedule';
-import Separator from '../../components/Separator';
-import CalendarSchedule from '../../components/CalendarSchedule';
-import { Container } from './styles';
+import { ContainerFullHorizontal } from '../../components/Container';
+import List, { Line, LineText, LineCol, LineButton } from '../../components/List';
 
-function CreateSchedule({ route }) {
-  const [hourStart, sethourStart] = useState(new Date());
-  const [hourEnd, sethourEnd] = useState(new Date());
-  const [serviceTime, setServiceTime] = useState('60');
-  const [loadingCalendar, setLoadingCalendar] = useState(false);
+import { AddSchedule } from './styles';
 
-  const [hours, setHours] = useState([]);
-  const [isTemplate, setIsTemplate] = useState(false);
+export default function CreateSchedule() {
+  const [schedules, setSchedules] = useState([]);
 
-  const { template } = route.params;
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    iniTemplateIsCreate();
-  }, []);
+    async function loadingSchedules() {
+      const response = await api.get('schedules');
 
-  async function iniTemplateIsCreate() {
-    if (template) {
-      setIsTemplate(!!template.id);
-      sethourStart(parseISO(template.office_hours_start));
-      sethourEnd(parseISO(template.office_hours_end));
-      setServiceTime(template.time);
-
-      const responseHours = await api.get('/appointments', { params: { templateId: template.id } });
-
-      if (responseHours.status === 200) {
-        setHours(responseHours.data.map(
-          (hour) => ({
-            id: hour.id,
-            date: parseISO(hour.date),
-            time: format(parseISO(hour.date), 'HH:mm'),
-            available: true,
-            click: () => {},
-            day: getDay(parseISO(hour.date)),
-          })
-        ));
+      if (response.status === 200) {
+        const resSchedules = response.data.map(
+          (schedule) => ({
+              id: schedule.id.toString(),
+              dateStart: parseISO(schedule.date_start).getFullYear() > 2000
+                ? format(parseISO(schedule.date_start), 'dd/MM/yyyy')
+                : '',
+              dateEnd: format(parseISO(schedule.date_end), 'dd/MM/yyyy'),
+              hoursStart: format(parseISO(schedule.hours_start), 'HH:mm'),
+              hoursEnd: format(parseISO(schedule.hours_end), 'HH:mm'),
+              timeRange: schedule.time_range,
+            })
+        );
+        setSchedules(resSchedules);
       }
     }
-  }
+
+    if(isFocused) loadingSchedules();
+  }, [isFocused]);
 
   return (
     <Background>
-      <Container>
-        <ParamBarSchedule
-          hourStart={hourStart}
-          sethourStart={sethourStart}
-          hourEnd={hourEnd}
-          sethourEnd={sethourEnd}
-          serviceTime={serviceTime}
-          setServiceTime={setServiceTime}
-          setLoadingCalendar={setLoadingCalendar}
-          hours={hours}
-          setHours={setHours}
-          isTemplate={isTemplate}
+      <ContainerFullHorizontal>
+        <List
+          data={schedules}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <Line key={item.id}>
+              <LineCol>
+                <LineText fontSize={16} bold>
+                  {item.dateStart} - {item.dateEnd}
+                </LineText>
+                <LineText fontSize={14}>
+                  {item.hoursStart} - {item.hoursEnd}
+                </LineText>
+                <LineText fontSize={14}>
+                  {item.timeRange}m
+                </LineText>
+              </LineCol>
+
+              {/* #4da6ff */}
+              <LineButton
+                color="#ff8c1a"
+                onPress={() => navigation.navigate('ScheduleEvents', { scheduleId: item.id })}>
+                <LineText fontSize={16} marginRight={5} fontColor="#fff">
+                  Eventos
+                </LineText>
+                <Icon name="event-busy" size={25} color="#fff"/>
+              </LineButton>
+            </Line>
+          )}
         />
-        <Separator />
-        <CalendarSchedule
-          hours={hours}
+
+        <AddSchedule
+          onPress={() => navigation.navigate('CreateScheduleGenerate')}
         />
-      </Container>
+      </ContainerFullHorizontal>
     </Background>
   );
-};
-
-export default CreateSchedule;
+}
