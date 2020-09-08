@@ -20,23 +20,26 @@ function AppRoutes() {
     <Tab.Navigator initialRoute="MySchedule">
 
       { provider &&
-        <Tab.Screen
-          name="CreateSchedule"
-          component={CreateScheduleRoutes}
-          options={{
-            title: 'Gerenciar',
-            tabBarIcon: ({color, size}) => (<Icon name="today" color={color} size={size} />)
-          }}
-        />
+        <>
+          <Tab.Screen
+            name="CreateSchedule"
+            component={CreateScheduleRoutes}
+            options={{
+              title: 'Gerenciar',
+              tabBarIcon: ({color, size}) => (<Icon name="today" color={color} size={size} />)
+            }}
+          />
+          <Tab.Screen
+            name="MyCalendar"
+            component={MyCalendarRoutes}
+            options={{
+              title: 'Minha agenda',
+              tabBarIcon: ({color, size}) => (<Icon name="date-range" color={color} size={size} />)
+            }}
+          />
+        </>
       }
-      <Tab.Screen
-        name="MyCalendar"
-        component={MyCalendarRoutes}
-        options={{
-          title: 'Minha agenda',
-          tabBarIcon: ({color, size}) => (<Icon name="date-range" color={color} size={size} />)
-        }}
-      />
+
       <Tab.Screen
         name="MyScheduleRoutes"
         component={MyScheduleRoutes}

@@ -24,7 +24,14 @@ export function userCreateRequest(user) {
 export function userCreateSuccess() {
   return {
     type: ACTION_USER_CREATE_SUCCESS,
-    payload: {},
+    payload: { redirectSignIn: true },
+  };
+}
+
+export function userCreateRedirectSuccess() {
+  return {
+    type: ACTION_USER_CREATE_SUCCESS,
+    payload: { redirectSignIn: false },
   };
 }
 

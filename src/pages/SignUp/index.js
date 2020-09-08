@@ -1,15 +1,15 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Image } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Background from '../../components/BackgroundSign';
 import { Container, Form, FormInput, SubmitButton, TextButton, SignLink, SignLinkText } from './styles';
-import { userCreateRequest } from '../../store/modules/user/actions';
+import { userCreateRequest, userCreateRedirectSuccess } from '../../store/modules/user/actions';
 
 import Logo from '../../assets/logo.png';
 
 function SignUp({ navigation }) {
-  const [name, setName] = useState('');
+  const [username, setusername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -17,9 +17,17 @@ function SignUp({ navigation }) {
   const passwordRef = useRef('');
 
   const dispatch = useDispatch();
+  const redirectSignIn = useSelector((state) => state.user.redirectSignIn)
+
+  useEffect(() => {
+    if (redirectSignIn) {
+      dispatch(userCreateRedirectSuccess());
+      navigation.navigate('SignIn');
+    }
+  }, [redirectSignIn])
 
   function handleSubmit() {
-    const user = { name, email, password };
+    const user = { username, email, password };
 
     dispatch(userCreateRequest(user));
   }
@@ -34,11 +42,11 @@ function SignUp({ navigation }) {
             icon="person-outline"
             autoCapitalize="none"
             autoCorrect={false}
-            onChangeText={setName}
+            onChangeText={setusername}
             onSubmitEditing={() => emailRef.current.focus()}
             placeholder="Nome completo"
             returnKeyType="next"
-            value={name}
+            value={username}
           />
 
           <FormInput

@@ -17,10 +17,10 @@ export function signInRequest(email, password) {
   };
 }
 
-export function signInSuccess(user, token) {
+export function signInSuccess(user, token, tokenRefresh) {
   return {
     type: ACTION_SIGN_IN_SUCCESS,
-    payload: { user, token },
+    payload: { user, token, tokenRefresh },
   };
 }
 

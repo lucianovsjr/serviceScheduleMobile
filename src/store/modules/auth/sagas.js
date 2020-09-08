@@ -6,29 +6,34 @@ import { ACTION_SIGN_IN_REQUEST, signInSuccess, signInFailed } from './actions';
 
 function* signIn(action) {
   try {
-    const { email, password } = action.payload;
+    const { email: username, password } = action.payload;
 
-    const response = yield call(api.post, 'session', { email, password });
+    const response = yield call(api.post, 'token', { username, password });
 
-    const { user, token } = response.data;
+    const { access, refresh } = response.data;
 
-    api.defaults.headers.Authorization = `Bearer ${token}`;
+    api.defaults.headers.Authorization = `Bearer ${access}`;
 
-    const responseUser = yield call(api.get, 'users', {});
+    const responseUser = yield call(api.get, 'perfil/');
 
-    const { name, fantasyName, profession } = responseUser.data;
+    const { name, fantasy_name: fantasyName, profession, provider, email } = responseUser.data;
 
     yield put(signInSuccess(
       {
         name,
         fantasyName,
         profession,
-        ...user
+        provider,
+        email
       },
-      token
+      access,
+      refresh
     ));
   } catch (error) {
-
+    if (error.message === 'Request failed with status code 401')
+      alert('Usuário ou Senha inválido!')
+    else
+      alert(error.message);
     yield put(signInFailed(error.message));
   }
 }

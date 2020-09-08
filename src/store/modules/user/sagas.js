@@ -12,13 +12,13 @@ import {
 
 function* userCreate(action) {
   try {
-    const { name, email, password, fantasyName, profession } = action.payload.user;
+    const { username, email, password } = action.payload.user;
 
-    yield call(api.post, 'users', { name, email, password, fantasyName, profession });
+    yield call(api.post, 'users/register', { username, first_name: username, email, password });
 
     yield put(userCreateSuccess());
   } catch (error) {
-
+    alert(error.message);
     yield put(userCreateFailed(error.message));
   }
 }
@@ -30,8 +30,9 @@ function* userUpdate(action) {
     const response = yield call(api.put, 'users', { name, fantasyName, profession });
 
     yield put(userUpdateSuccess(response.data));
-    yield put(alert('salvo'));
+    alert('salvo');
   } catch (error) {
+    alert(error.message);
     yield put(userUpdateFailed(error.message));
   }
 }
