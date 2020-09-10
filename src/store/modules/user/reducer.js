@@ -16,7 +16,6 @@ const INITIAL_STATE = {
 function user(state = INITIAL_STATE, action) {
   switch (action.type) {
     case ACTION_SIGN_IN_SUCCESS:
-      console.log(action.payload);
       return {
         name: action.payload.user.name,
         email: action.payload.user.email,

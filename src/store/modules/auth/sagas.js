@@ -16,7 +16,7 @@ function* signIn(action) {
 
     const responseUser = yield call(api.get, 'perfil/');
 
-    const { name, fantasy_name: fantasyName, profession, provider, email } = responseUser.data;
+    const { name, fantasy_name: fantasyName, profession, provider, email } = responseUser.data[0];
 
     yield put(signInSuccess(
       {
