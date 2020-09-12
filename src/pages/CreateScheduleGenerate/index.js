@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 
 import api from '../../services/api';
+import { dateFormat, hourFormat } from '../../mixen/reqFormat';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
 import { Form, Line, TextButton } from '../../components/Form';
 
-import {
-  Submit,
-  Cancel
-} from './styles';
+import { Submit, Cancel } from './styles';
 
 export default function CreateScheduleGenerate({ navigation }) {
   const [dateStart, setDateStart] = useState(new Date());
@@ -19,18 +17,23 @@ export default function CreateScheduleGenerate({ navigation }) {
   const [timeRange, setTimeRange] = useState('60');
 
   async function handleSubmit() {
-    const resSchedule = await api.post('schedules', { dateStart, dateEnd, hoursStart, hoursEnd, timeRange });
+    const resSchedule = await api.post('schedules/', {
+      date_start: dateFormat(dateStart),
+      date_end: dateFormat(dateEnd),
+      hours_start: hourFormat(hoursStart),
+      hours_end: hourFormat(hoursEnd),
+      time_range: timeRange
+    });
 
-    if (resSchedule.status === 200) {
-      const { id: scheduleId } = resSchedule.data;
-
-      const resAppointments = await api.post('appointments', { dateStart, dateEnd, hoursStart, hoursEnd, timeRange, scheduleId });
-
-      if (resAppointments.status === 200) {
+    switch(resSchedule.status) {
+      case 200: case 201:
         navigation.goBack();
-      }
-    } else {
-      alert('Erro', resSchedule.data.msg);
+        break;
+      case 202:
+        alert(resSchedule.data.msg);
+        break;
+      default:
+        alert('Erro', resSchedule.data.msg);
     }
   }
 

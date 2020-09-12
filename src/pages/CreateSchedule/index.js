@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 
-import { parseISO, format } from 'date-fns';
-
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '../../services/api';
+import { dateFormat, hourFormat } from '../../mixen/reqFormat';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -22,18 +21,16 @@ export default function CreateSchedule() {
 
   useEffect(() => {
     async function loadingSchedules() {
-      const response = await api.get('schedules');
+      const response = await api.get('schedules/');
 
       if (response.status === 200) {
         const resSchedules = response.data.map(
           (schedule) => ({
               id: schedule.id.toString(),
-              dateStart: parseISO(schedule.date_start).getFullYear() > 2000
-                ? format(parseISO(schedule.date_start), 'dd/MM/yyyy')
-                : '',
-              dateEnd: format(parseISO(schedule.date_end), 'dd/MM/yyyy'),
-              hoursStart: format(parseISO(schedule.hours_start), 'HH:mm'),
-              hoursEnd: format(parseISO(schedule.hours_end), 'HH:mm'),
+              dateStart: dateFormat(schedule.date_start, false),
+              dateEnd: dateFormat(schedule.date_end, false),
+              hoursStart: hourFormat(schedule.hours_start, false),
+              hoursEnd: hourFormat(schedule.hours_end, false),
               timeRange: schedule.time_range,
             })
         );
