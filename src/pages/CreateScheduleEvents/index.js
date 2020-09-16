@@ -4,7 +4,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { parseISO } from 'date-fns';
 
 import api from '../../services/api';
-import { convertWeek } from '../../mixen/week';
+import { hourFormat, dateFormat } from '../../mixen/reqFormat';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -33,19 +33,17 @@ export default function CreateScheduleEvents() {
 
   useEffect(() => {
     async function loadingSchedule() {
-      if (params && params.eventId) {
-        const response = await api.get(`events/edit/${params.eventId}`);
+      if (params && params.event) {
+        setTitle(params.event.name);
+        if (params.event.week_days.includes(true))
+          setSelectedWeek(params.event.week_days);
+        else
+          setDate(parseISO(params.event.date));
+        setHoursStart(hourFormat(params.event.hours_start, false, true));
+        setHoursEnd(hourFormat(params.event.hours_end, false, true));
+        setAllDay(params.event.allDay);
 
-        if (response.status === 200) {
-          setTitle(response.data.name);
-          setSelectedWeek(convertWeek(response.data.week));
-          setDate(parseISO(response.data.date));
-          setHoursStart(parseISO(response.data.hoursStart));
-          setHoursEnd(parseISO(response.data.hoursEnd));
-          setAllDay(response.data.allDay);
-
-          setIsCreate(false);
-        }
+        setIsCreate(false);
       }
     }
     loadingSchedule();
@@ -62,20 +60,24 @@ export default function CreateScheduleEvents() {
   async function handleSubmit() {
     const data = {
       name: title,
-      week: selectedWeek,
-      date,
-      hoursStart,
-      hoursEnd,
-      allDay
+      week: selectedWeek.reduce((accumlator, currentValor) => {
+        return `${accumlator}${currentValor ? '1' : '0'}`
+      }, ''),
+      date: dateFormat(date),
+      hours_start: hourFormat(hoursStart),
+      hours_end: hourFormat(hoursEnd),
+      all_day: allDay,
+      schedule: params.scheduleId
     };
 
     const response = await (
       isCreate
-      ? api.post('events', {...data, scheduleId: params.scheduleId})
-      : api.put(`events/edit/${params.eventId}`, data)
+      ? api.post('events/', data)
+      : api.put(`events/${params.event.id}/`, data)
     );
 
-    if (response.status === 200) navigation.goBack();
+    if (response.status === 200 || response.status === 201 || response.status === 202)
+      navigation.goBack();
     else alert('Erro');
   }
 
@@ -96,9 +98,9 @@ export default function CreateScheduleEvents() {
         {
           text: 'Sim',
           onPress: async () => {
-            const response = await api.delete(`events/edit/${params.eventId}`);
+            const response = await api.delete(`events/${params.event.id}/`);
 
-            if (response.status === 200) navigation.goBack();
+            if (response.status === 204) navigation.goBack();
           }
         }
       ],

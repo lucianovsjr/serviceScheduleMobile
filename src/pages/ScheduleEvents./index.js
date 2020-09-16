@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import { useNavigation, useIsFocused, useRoute } from '@react-navigation/native';
 
-import { parseISO, format } from 'date-fns';
-
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '../../services/api';
+import { dateFormat, hourFormat } from '../../mixen/reqFormat';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -25,7 +24,7 @@ export default function ScheduleEvents() {
 
   useEffect(() => {
     async function loadingEvents() {
-      const response = await api.get(`events/${params.scheduleId}`);
+      const response = await api.get(`events/${params.scheduleId}/`);
 
       if (response.status === 200) {
         setEvents(response.data.map(
@@ -33,7 +32,7 @@ export default function ScheduleEvents() {
 
             return {
               ...data,
-              weekFormat: data.week.reduce((accumlator, currentValor, index) => {
+              weekFormat: data.week_days.reduce((accumlator, currentValor, index) => {
                 let dayStr = '';
 
                 if(!!currentValor)
@@ -52,10 +51,11 @@ export default function ScheduleEvents() {
 
                 return accumlator;
               }, ''),
-              dateFormat: data.date ? format(parseISO(data.date), 'dd/MM/yyyy') : '',
-              hoursStartFormat: data.hoursStart ? format(parseISO(data.hoursStart), 'HH:mm') : '',
-              hoursEndFormat: data.hoursEnd ? format(parseISO(data.hoursEnd), 'HH:mm') : '',
-              scheduleId: data.scheduleId,
+              dateFormat: data.date ? dateFormat(data.date) : '',
+              hoursStartFormat: data.hours_start ? hourFormat(data.hours_start, false) : '',
+              hoursEndFormat: data.hours_end ? hourFormat(data.hours_end, false) : '',
+              scheduleId: data.schedule,
+              allDay: data.all_day,
             }
           }
         ));
@@ -90,7 +90,7 @@ export default function ScheduleEvents() {
 
               <LineButton
                 color="#4da6ff"
-                onPress={() => navigation.navigate('CreateScheduleEvents', { eventId: item.id, scheduleId: item.scheduleId })}>
+                onPress={() => navigation.navigate('CreateScheduleEvents', { event: item, scheduleId: item.scheduleId })}>
                 <LineText fontSize={16} marginRight={5} fontColor="#fff">
                   Editar
                 </LineText>
