@@ -20,15 +20,15 @@ function MySchedule() {
 
   useEffect(() => {
     async function loadingMyHours() {
-      const response = await api.get('my-appointments');
+      const response = await api.get('myappointments/');
 
       if (response.status === 200) {
         setMyHours(
           response.data.map((hour) => ({
             ...hour,
             id: hour.id,
-            dateFormat: format(parseISO(hour.date), 'dd/MM/yyyy'),
-            timeFormat: format(parseISO(hour.date), 'HH:mm'),
+            dateFormat: format(parseISO(hour.date_time), 'dd/MM/yyyy'),
+            timeFormat: format(parseISO(hour.date_time), 'HH:mm'),
           }))
         );
       }
@@ -51,7 +51,7 @@ function MySchedule() {
         {
           text: 'Sim',
           onPress: async () => {
-            const response = await api.put('select-appointments-month', { id, newStatus: 'canceled' });
+            const response = await api.put(`appointments/status/${id}/`);
 
             if (response.status === 200)
               setMyHours(myHours.filter((hour) => hour.id !== id));
@@ -80,7 +80,7 @@ function MySchedule() {
 
                 <LineColProvider>
                   <LineText width={180} fontSize={16} bold>
-                    {item.provider.name}
+                    {item.provider_name}
                   </LineText>
                   <LineText fontSize={14}>
                     {item.timeFormat}

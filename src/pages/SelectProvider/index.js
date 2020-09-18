@@ -18,13 +18,14 @@ function SelectProvider({navigation}) {
 
   useEffect(() => {
     async function loadingProviders() {
-      const response = await api.get('/providers');
+      const response = await api.get('/providers/');
 
       if (response.status === 200) {
         setProviders(response.data.map((provider) =>
           ({
             ...provider,
             id: String(provider.id),
+            fantasyName: provider.fantasy_name
           })
         ));
       }

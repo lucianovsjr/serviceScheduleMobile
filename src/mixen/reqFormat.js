@@ -1,4 +1,5 @@
 import { parseISO, format, set } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 
 export const dateFormat = (date, req=true) => {
     let returnDate = date;
@@ -33,4 +34,8 @@ export const hourFormat = (hour, req=true, reqDate=false) => {
       return format(returnHour, "HH:mm:ss");
     else
       return format(returnHour, 'HH:mm')
+}
+
+export const dayWeekFormat = (date) => {
+  return format(parseISO(date), 'EEEE', { locale: pt })
 }

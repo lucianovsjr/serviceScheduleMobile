@@ -2,8 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { format } from 'date-fns';
+import pt from 'date-fns/locale/pt'
 
 import api from '../../services/api';
+import { hourFormat, dateFormat, dayWeekFormat } from '../../mixen/reqFormat';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -34,40 +37,34 @@ export default function SelectProviderMonth({ navigation, route }) {
 
   useEffect(() => {
     async function loadingProviders() {
-      const response = await api.get('select-schedule-month', { params: { providerId } });
+      const response = await api.get(`providers/months/${providerId}/`);
 
       if (response.status === 200) {
-        setAppointmentsMonth(response.data);
+        setAppointmentsMonth(response.data.map((data) => ({
+          ...data,
+          year: data.date.substring(0, 4),
+          month: data.date.substring(4, 7),
+          dateFormat: format(new Date(
+            data.date.substring(0, 4),
+            data.date.substring(4, 7),
+            1
+          ), 'MMM/yyyy', { locale: pt })
+        })));
       }
     }
     loadingProviders();
   }, [])
 
   async function loadingAppointments(year, month, idDate) {
-    const response = await api.get('select-appointments-month', { params: { providerId, year, month } });
-    const draftEnd = {};
-    var draftAppointment = {};
-    var draftDate = null;
+    const response = await api.get('appointments/months/', { params: { providerId, year, month } });
 
     if (response.status === 200) {
-      draftAppointment = response.data.map((appointment) => {
-          let isTitle = draftDate !== appointment.dateFormat;
-
-          if (isTitle) draftDate = appointment.dateFormat;
-          draftEnd[draftDate] = appointment.id;
-
-          return {
-            ...appointment,
-            type: isTitle ? 'title' : 'row',
-          }
-      });
-
-      setAppointments(draftAppointment.map((appointment) => {
-        return {
-          ...appointment,
-          isEnd: draftEnd[appointment.dateFormat] === appointment.id,
-        };
-      }));
+      setAppointments(response.data.map((data) => ({
+        ...data,
+        hourFormat: hourFormat(data.time, req=false),
+        dateFormat: dateFormat(data.date, req=false),
+        dayWeek: dayWeekFormat(data.date)
+      })))
       setSelectedMonth(idDate);
     }
   }
@@ -85,7 +82,7 @@ export default function SelectProviderMonth({ navigation, route }) {
         {
           text: 'Sim',
           onPress: async () => {
-            const response = await api.put('select-appointments-month', { id, newStatus: 'marked' });
+            const response = await api.put(`appointments/status/${id}/`);
 
             if (response.status === 200)
               setAppointments(appointments.map((appointment) => {
@@ -136,7 +133,7 @@ export default function SelectProviderMonth({ navigation, route }) {
             keyExtractor={item => item.id.toString()}
             renderItem={({item}) => (
               <Line>
-                {item.status === 'available'
+                {item.status === 'available' || item.status === 'canceled'
                   ? <>
                       <LineCol>
                         <LineText fontSize={16} marginLeft={15} fontColor="#000">
