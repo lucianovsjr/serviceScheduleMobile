@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { format } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '../../services/api';
+import { dateFormat, hourFormat, dayWeekFormat } from '../../mixen/reqFormat';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -35,46 +39,59 @@ export default function MyCalendar() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
 
+  const user = useSelector((state) => state.user);
+
   useEffect(() => {
     async function loading() {
-      const response = await api.get('my-schedules-months');
+      const response = await api.get(`providers/months/${user.id}/`);
 
       if (response.status === 200) {
-        setMyAppointments(response.data);
+        setMyAppointments(response.data.map((data) => ({
+            ...data,
+            year: data.date.substring(0, 4),
+            month: data.date.substring(4, 7),
+            dateFormat: format(new Date(
+              data.date.substring(0, 4),
+              data.date.substring(4, 7),
+              1
+            ), 'MMM/yyyy', { locale: pt }),
+            idDate: format(new Date(
+              data.date.substring(0, 4),
+              data.date.substring(4, 7),
+              1
+            ), 'yyyyMM')
+
+          })
+        ));
       }
     }
 
-    if (isFocused) loading();
+    if (isFocused){
+      loading();
+      if (selectedMonth !== INIT_SELECTED_MONTH)
+        loadingAppointments(
+          parseInt(selectedMonth.substring(0, 4)),
+          parseInt(selectedMonth.substring(4))-1,
+          0,
+          true
+        );
+    }
   }, [isFocused]);
 
-  async function loadingAppointments(year, month, idDate) {
+  async function loadingAppointments(year, month, idDate, refresh=false) {
 
-    if (selectedMonth !== idDate) {
-      const response = await api.get('my-appointments-months', { params: { year, month } });
-      const draftEnd = {};
-      var draftAppointment = {};
-      var draftDate = null;
+    if (selectedMonth !== idDate || refresh === true) {
+      const response = await api.get('appointments/months/', { params: { providerId: user.id, year, month } });
 
       if (response.status === 200) {
-        draftAppointment = response.data.map((appointment) => {
-            let isTitle = draftDate !== appointment.dateFormat;
-
-            if (isTitle) draftDate = appointment.dateFormat;
-            draftEnd[draftDate] = appointment.id;
-
-            return {
-              ...appointment,
-              type: isTitle ? 'title' : 'row',
-            }
-        });
-
-        setAppointments(draftAppointment.map((appointment) => {
-          return {
-            ...appointment,
-            isEnd: draftEnd[appointment.dateFormat] === appointment.id,
-          };
-        }));
-        setSelectedMonth(idDate);
+        setAppointments(response.data.map((data) => ({
+          ...data,
+          hourFormat: hourFormat(data.time, req=false),
+          dateFormat: dateFormat(data.date, req=false),
+          dayWeek: dayWeekFormat(data.date)
+        })))
+        if (!refresh)
+          setSelectedMonth(idDate);
       }
     } else {
       setAppointments([]);
@@ -95,7 +112,7 @@ export default function MyCalendar() {
         {
           text: 'Sim',
           onPress: async () => {
-            const response = await api.put('select-appointments-month', { id, newStatus: 'canceled' });
+            const response = await api.put(`appointments/status/${id}/`);
 
             if (response.status === 200)
               setAppointments(appointments.map((appointment) => {
@@ -125,8 +142,8 @@ export default function MyCalendar() {
             renderItem={({item}) => (
               <ButtonCardMonth
                 key={item.date}
-                onPress={() => loadingAppointments(item.year, item.month, item.date)}
-                selected={selectedMonth===item.date}
+                onPress={() => loadingAppointments(item.year, item.month, item.idDate)}
+                selected={selectedMonth===item.idDate}
               >
                 <TextMonth>{item.dateFormat}</TextMonth>
                 <CardColumn>
@@ -161,7 +178,7 @@ export default function MyCalendar() {
                 <LineText fontSize={16} marginLeft={15} fontColor="#000">
                     {item.looseClient}
                   </LineText>
-                {item.status === 'available'
+                {item.status === 'available' || item.status === 'canceled'
                   ? <>
                       <LineButton
                       color="#00cc66"
@@ -183,7 +200,7 @@ export default function MyCalendar() {
                 }
               </Line>
             )}
-            style={{flex:1, backgroundColor: listBackgroundColor}}
+            style={{flex: 1, backgroundColor: listBackgroundColor}}
           />
 
           {selectedMonth === INIT_SELECTED_MONTH

@@ -17,6 +17,7 @@ function user(state = INITIAL_STATE, action) {
   switch (action.type) {
     case ACTION_SIGN_IN_SUCCESS:
       return {
+        id: action.payload.user.id,
         name: action.payload.user.name,
         email: action.payload.user.email,
         provider: action.payload.user.provider,
