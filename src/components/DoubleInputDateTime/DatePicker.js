@@ -7,6 +7,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 export default function DatePicker({ name, show, setShow, date, setDate, calendar }) {
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
+    currentDate.setSeconds(0);
 
     setShow(Platform.OS === 'ios');
     if (event.type === 'set') setDate(currentDate);

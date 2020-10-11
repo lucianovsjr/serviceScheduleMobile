@@ -1,4 +1,7 @@
 {
   "name": "serviceScheduleMobile",
-  "displayName": "serviceScheduleMobile"
+  "displayName": "serviceScheduleMobile",
+  "android": {
+    "package": "com.lucianovsjr.calendar"
+  }
 }

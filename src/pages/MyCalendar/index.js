@@ -8,7 +8,7 @@ import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '../../services/api';
-import { dateFormat, hourFormat, dayWeekFormat } from '../../mixen/reqFormat';
+import { dateFormat, hourFormat, dayWeekFormat, nameMonthFormat } from '../../mixen/reqFormat';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -50,11 +50,7 @@ export default function MyCalendar() {
             ...data,
             year: data.date.substring(0, 4),
             month: data.date.substring(4, 7),
-            dateFormat: format(new Date(
-              data.date.substring(0, 4),
-              data.date.substring(4, 7),
-              1
-            ), 'MMM/yyyy', { locale: pt }),
+            dateFormat: nameMonthFormat(data.date),
             idDate: format(new Date(
               data.date.substring(0, 4),
               data.date.substring(4, 7),

@@ -3,6 +3,8 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import { ButtonCard } from '../../components/Card';
 
+import { PrimaryColor, SecondaryColor } from '../../styleGuide';
+
 /*
 export const xContainerHeader = styled.View`
   padding: 10px 10px 0;
@@ -13,7 +15,7 @@ export const xContainerHeader = styled.View`
 export const ContainerHeader  = styled(LinearGradient).attrs({
   start: {x: 0.0, y: 0.0},
   end: {x: 0.0, y: 0.8},
-  colors: ['#4289cb', '#FFF']
+  colors: [SecondaryColor, PrimaryColor]
 })`
   padding: 10px 10px 0;
 `;

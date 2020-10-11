@@ -39,3 +39,14 @@ export const hourFormat = (hour, req=true, reqDate=false) => {
 export const dayWeekFormat = (date) => {
   return format(parseISO(date), 'EEEE', { locale: pt })
 }
+
+export const nameMonthFormat = (date) => {
+  const year = date.substring(0, 4);
+  const month = (parseInt(date.substring(4, 7)) - 1).toString();
+
+  return format(
+    new Date(year, month, 1),
+    'MMM/yyyy',
+    { locale: pt }
+  );
+}

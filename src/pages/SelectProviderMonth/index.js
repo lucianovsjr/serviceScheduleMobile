@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import pt from 'date-fns/locale/pt'
 
 import api from '../../services/api';
-import { hourFormat, dateFormat, dayWeekFormat } from '../../mixen/reqFormat';
+import { hourFormat, dateFormat, dayWeekFormat, nameMonthFormat } from '../../mixen/reqFormat';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -44,11 +44,7 @@ export default function SelectProviderMonth({ navigation, route }) {
           ...data,
           year: data.date.substring(0, 4),
           month: data.date.substring(4, 7),
-          dateFormat: format(new Date(
-            data.date.substring(0, 4),
-            data.date.substring(4, 7),
-            1
-          ), 'MMM/yyyy', { locale: pt })
+          dateFormat: nameMonthFormat(data.date),
         })));
       }
     }

@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.View.attrs({
-  borderColor: '#fff',
+  borderColor: '#3b9eff',
   borderWidth: 1,
 })`
   padding: 0 15px;
@@ -12,7 +12,7 @@ export const Container = styled.View.attrs({
 `;
 
 export const TInput = styled.TextInput.attrs({
-  placeholderTextColor: '#fff',
+  placeholderTextColor: '#f3faff',
 })`
   flex: 1;
   font-size: 15px;
