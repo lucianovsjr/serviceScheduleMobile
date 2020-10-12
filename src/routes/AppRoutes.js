@@ -19,7 +19,7 @@ function AppRoutes() {
   return (
     <Tab.Navigator initialRoute="MySchedule">
 
-      { provider &&
+      { provider ?
         <>
           <Tab.Screen
             name="CreateSchedule"
@@ -38,24 +38,27 @@ function AppRoutes() {
             }}
           />
         </>
+        :
+        <>
+          <Tab.Screen
+            name="MyScheduleRoutes"
+            component={MyScheduleRoutes}
+            options={{
+              title: 'Agendamentos',
+              tabBarIcon: ({color, size}) => (<Icon name="event-available" color={color} size={size} />)
+            }}
+          />
+          <Tab.Screen
+            name="Select"
+            component={SelectRoutes}
+            options={{
+              title: 'Agendar',
+              tabBarIcon: ({color, size}) => (<Icon name="add-circle-outline" color={color} size={size} />)
+            }}
+          />
+        </>
       }
 
-      <Tab.Screen
-        name="MyScheduleRoutes"
-        component={MyScheduleRoutes}
-        options={{
-          title: 'Agendamentos',
-          tabBarIcon: ({color, size}) => (<Icon name="event-available" color={color} size={size} />)
-        }}
-      />
-      <Tab.Screen
-        name="Select"
-        component={SelectRoutes}
-        options={{
-          title: 'Agendar',
-          tabBarIcon: ({color, size}) => (<Icon name="add-circle-outline" color={color} size={size} />)
-        }}
-      />
       <Tab.Screen
         name="Profile"
         component={ProfileRoutes}

@@ -3,7 +3,6 @@ import { Alert } from 'react-native';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { format } from 'date-fns';
-import pt from 'date-fns/locale/pt';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -12,8 +11,9 @@ import { dateFormat, hourFormat, dayWeekFormat, nameMonthFormat } from '../../mi
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
-import List, { ListHorizontal, Line, LineCol, LineRow, LineText, LineButton } from '../../components/List';
+import List, { ListHorizontal, Line, LineCol, LineText, LineButton } from '../../components/List';
 import { CardColumn } from '../../components/Card';
+import ButtonAdd from '../../components/ButtonAdd';
 
 import {
   ContainerHeader,
@@ -21,8 +21,7 @@ import {
   ButtonCardMonth,
   TextMonth,
   TitleVacancies,
-  TextVacancies,
-  AddSchedule
+  TextVacancies
 } from './styles';
 
 export default function MyCalendar() {
@@ -162,10 +161,10 @@ export default function MyCalendar() {
               <Line>
                 <LineCol>
                   <LineText fontSize={16} marginLeft={15} fontColor="#000">
-                    {item.hourFormat}
+                    {item.loose_client ? item.loose_client : 'Horário vago'}
                   </LineText>
                   <LineText fontSize={14} marginLeft={15} fontColor="#000">
-                    {item.dayWeek}
+                  {item.hourFormat} {item.dayWeek}
                   </LineText>
                   <LineText fontSize={10} marginLeft={15} fontColor="#000">
                     {item.dateFormat}
@@ -200,7 +199,7 @@ export default function MyCalendar() {
           />
 
           {selectedMonth === INIT_SELECTED_MONTH
-            &&  <AddSchedule onPress={() => navigateAppointment()}/>}
+            &&  <ButtonAdd route="MyCalendarAppointment" />}
         </ContainerList>
 
       </ContainerFullHorizontal>

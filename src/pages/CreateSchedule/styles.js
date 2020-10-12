@@ -25,13 +25,3 @@ export const Title = styled.Text`
   font-weight: bold;
   color: #333;
 `;
-
-export const AddSchedule = styled(Icon).attrs({
-  name: "add-circle",
-  size: 45,
-  color: "#00cc66",
-})`
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-`;

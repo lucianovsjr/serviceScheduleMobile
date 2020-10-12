@@ -10,8 +10,7 @@ import { dateFormat, hourFormat } from '../../mixen/reqFormat';
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
 import List, { Line, LineText, LineCol, LineButton } from '../../components/List';
-
-import { AddSchedule } from './styles';
+import ButtonAdd from '../../components/ButtonAdd';
 
 export default function ScheduleEvents() {
   const [events, setEvents] = useState([]);
@@ -100,8 +99,11 @@ export default function ScheduleEvents() {
           )}
         />
 
-        <AddSchedule
-          onPress={() => navigation.navigate('CreateScheduleEvents', { scheduleId: params.scheduleId })}
+        <ButtonAdd
+          route="CreateScheduleEvents"
+          route_params={{
+            scheduleId: params.scheduleId
+          }}
         />
       </ContainerFullHorizontal>
     </Background>

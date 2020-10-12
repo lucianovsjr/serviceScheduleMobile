@@ -10,8 +10,7 @@ import { dateFormat, hourFormat } from '../../mixen/reqFormat';
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
 import List, { Line, LineText, LineCol, LineButton } from '../../components/List';
-
-import { AddSchedule } from './styles';
+import ButtonAdd from '../../components/ButtonAdd';
 
 export default function CreateSchedule() {
   const [schedules, setSchedules] = useState([]);
@@ -74,9 +73,7 @@ export default function CreateSchedule() {
           )}
         />
 
-        <AddSchedule
-          onPress={() => navigation.navigate('CreateScheduleGenerate')}
-        />
+        <ButtonAdd route="CreateScheduleGenerate" />
       </ContainerFullHorizontal>
     </Background>
   );
