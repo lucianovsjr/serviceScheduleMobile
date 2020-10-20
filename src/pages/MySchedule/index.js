@@ -5,7 +5,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { parseISO, format } from 'date-fns';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import api from '../../services/api';
+import api, { BASE_URL } from '../../services/api';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -75,7 +75,7 @@ function MySchedule() {
             >
               <LineRow>
                 <LineAvatar
-                  source={{uri: `https://api.adorable.io/avatars/40/${item.name}.png`}}
+                  source={{uri: `${BASE_URL}/static/MEDIA/${item.image_name}`}}
                 />
 
                 <LineColProvider>
