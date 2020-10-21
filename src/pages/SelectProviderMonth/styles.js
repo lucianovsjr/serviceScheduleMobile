@@ -15,7 +15,7 @@ export const xContainerHeader = styled.View`
 export const ContainerHeader  = styled(LinearGradient).attrs({
   start: {x: 0.0, y: 0.0},
   end: {x: 0.0, y: 0.8},
-  colors: [SecondaryColor, PrimaryColor]
+  colors: ['#fff', '#fff']
 })`
   padding: 10px 10px 0;
 `;

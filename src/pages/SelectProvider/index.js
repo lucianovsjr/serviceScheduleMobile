@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 
-import api from '../../services/api';
+import api, { BASE_URL } from '../../services/api';
 
 import Background from '../../components/Background';
 import Container from '../../components/Container';
@@ -46,12 +46,13 @@ function SelectProvider({navigation}) {
                 () => navigation.navigate('SelectProviderMonth',
                   {
                     providerId: item.id,
-                    name: item.name
+                    name: item.name,
+                    imageName: item.image_name
                   }
                 )
               }>
               <CardAvatar
-                source={{uri: `https://api.adorable.io/avatars/40/${item.name}.png`}}
+                source={{uri: `${BASE_URL}/static/MEDIA/${item.image_name}`}}
               />
               <CardColumnProvider>
                 <CardTitle1>{item.fantasyName}</CardTitle1>

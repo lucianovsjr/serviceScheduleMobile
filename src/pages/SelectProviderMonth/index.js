@@ -2,10 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { format } from 'date-fns';
-import pt from 'date-fns/locale/pt'
 
-import api from '../../services/api';
+import api, { BASE_URL } from '../../services/api';
 import { hourFormat, dateFormat, dayWeekFormat, nameMonthFormat } from '../../mixen/reqFormat';
 
 import Background from '../../components/Background';
@@ -33,7 +31,7 @@ export default function SelectProviderMonth({ navigation, route }) {
     appointments.length > 0 ? '#fff' : '#eee'
   , [appointments]);
 
-  const { providerId, name } = route.params;
+  const { providerId, name, imageName } = route.params;
 
   useEffect(() => {
     async function loadingProviders() {
@@ -98,7 +96,7 @@ export default function SelectProviderMonth({ navigation, route }) {
     <Background>
       <ContainerFullHorizontal topZero>
         <ContainerHeader>
-          <Avatar source={{uri: `https://api.adorable.io/avatars/40/${name}.png`}}/>
+          <Avatar source={{uri: `${BASE_URL}/static/MEDIA/${imageName}`}}/>
           <AvatarName>{name}</AvatarName>
 
           <ListHorizontal

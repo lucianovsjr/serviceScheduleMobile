@@ -31,9 +31,9 @@ export const hourFormat = (hour, req=true, reqDate=false) => {
       return returnHour;
 
     if (req)
-      return format(returnHour, "HH:mm:ss");
+      return format(returnHour, "HH:mm:ss", { locale: pt });
     else
-      return format(returnHour, 'HH:mm')
+      return format(returnHour, 'HH:mm', { locale: pt })
 }
 
 export const dayWeekFormat = (date) => {
