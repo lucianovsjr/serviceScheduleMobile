@@ -48,14 +48,14 @@ export default function CreateSchedule() {
           keyExtractor={item => item.id}
           renderItem={({item}) => (
             <Line key={item.id}>
-              <LineCol>
+              <LineCol hStart>
                 <LineText fontSize={16} bold>
                   {item.dateStart} - {item.dateEnd}
                 </LineText>
-                <LineText fontSize={14}>
+                <LineText fontSize={14} marginLeft={20}>
                   {item.hoursStart} - {item.hoursEnd}
                 </LineText>
-                <LineText fontSize={14}>
+                <LineText fontSize={14} marginLeft={40}>
                   {item.timeRange}m
                 </LineText>
               </LineCol>
