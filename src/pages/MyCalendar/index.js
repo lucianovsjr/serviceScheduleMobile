@@ -24,6 +24,8 @@ import {
   TextVacancies
 } from './styles';
 
+const DEFAULT_CLIENTE = 'Horário vago';
+
 export default function MyCalendar() {
   const INIT_SELECTED_MONTH = '0'
 
@@ -113,7 +115,8 @@ export default function MyCalendar() {
               setAppointments(appointments.map((appointment) => {
                 return {
                   ...appointment,
-                  status: appointment.id === id ? 'available' : appointment.status
+                  status: appointment.id === id ? 'available' : appointment.status,
+                  loose_client: appointment.id === id ? DEFAULT_CLIENTE : appointment.loose_client
                 }
               }));
           }
@@ -161,7 +164,7 @@ export default function MyCalendar() {
               <Line>
                 <LineCol>
                   <LineText fontSize={16} marginLeft={15} fontColor="#000">
-                    {item.loose_client ? item.loose_client : 'Horário vago'}
+                    {item.loose_client ? item.loose_client : DEFAULT_CLIENTE}
                   </LineText>
                   <LineText fontSize={14} marginLeft={15} fontColor="#000">
                   {item.hourFormat} {item.dayWeek}
