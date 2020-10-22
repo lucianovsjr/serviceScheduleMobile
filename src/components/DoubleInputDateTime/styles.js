@@ -23,7 +23,7 @@ export const Hours = styled(TouchableOpacity)`
   font-size: 14px;
 
   height: 36px;
-  width: 115px;
+  width: 130px;
   padding: 10px;
 
   margin-left: 5px;
