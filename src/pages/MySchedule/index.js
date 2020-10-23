@@ -75,7 +75,7 @@ function MySchedule() {
             >
               <LineRow>
                 <LineAvatar
-                  source={{uri: `${BASE_URL}/static/MEDIA/${item.image_name}`}}
+                  source={{uri: item.image_name}}
                 />
 
                 <LineColProvider>

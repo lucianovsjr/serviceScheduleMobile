@@ -96,7 +96,7 @@ export default function SelectProviderMonth({ navigation, route }) {
     <Background>
       <ContainerFullHorizontal topZero>
         <ContainerHeader>
-          <Avatar source={{uri: `${BASE_URL}/static/MEDIA/${imageName}`}}/>
+          <Avatar source={{uri: imageName}}/>
           <AvatarName>{name}</AvatarName>
 
           <ListHorizontal

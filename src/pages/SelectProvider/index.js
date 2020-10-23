@@ -52,7 +52,7 @@ function SelectProvider({navigation}) {
                 )
               }>
               <CardAvatar
-                source={{uri: `${BASE_URL}/static/MEDIA/${item.image_name}`}}
+                source={{uri: item.image_name}}
               />
               <CardColumnProvider>
                 <CardTitle1>{item.fantasyName}</CardTitle1>
