@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
 
 import { useNavigation, useIsFocused, useRoute } from '@react-navigation/native';
 
@@ -6,6 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '../../services/api';
 import { dateFormat, hourFormat } from '../../mixen/reqFormat';
+import { PrimaryColor } from '../../styleGuide';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -14,6 +16,7 @@ import ButtonAdd from '../../components/ButtonAdd';
 
 export default function ScheduleEvents() {
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -59,52 +62,61 @@ export default function ScheduleEvents() {
           }
         ));
       }
+      setLoading(false);
     }
 
     if (isFocused) loadingEvents();
+    else setLoading(true);
   }, [isFocused]);
 
   return (
     <Background>
       <ContainerFullHorizontal>
-        <List
-          data={events}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => (
-            <Line key={item.id}>
-              <LineCol hStart>
-                <LineText fontSize={16} bold>
-                  {item.name}
-                </LineText>
-                <LineText fontSize={14}>
-                  {item.weekFormat ? item.weekFormat : item.dateFormat}
-                </LineText>
-                <LineText fontSize={14}>
-                  {item.allDay
-                    ? 'Dia todo'
-                    : `${item.hoursStartFormat} - ${item.hoursEndFormat}`
-                  }
-                </LineText>
-              </LineCol>
+        {
+          loading && isFocused ?
+            <ActivityIndicator size="large" color={PrimaryColor} />
+          :
+            <>
+              <List
+                data={events}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({item}) => (
+                  <Line key={item.id}>
+                    <LineCol hStart>
+                      <LineText fontSize={16} bold>
+                        {item.name}
+                      </LineText>
+                      <LineText fontSize={14}>
+                        {item.weekFormat ? item.weekFormat : item.dateFormat}
+                      </LineText>
+                      <LineText fontSize={14}>
+                        {item.allDay
+                          ? 'Dia todo'
+                          : `${item.hoursStartFormat} - ${item.hoursEndFormat}`
+                        }
+                      </LineText>
+                    </LineCol>
 
-              <LineButton
-                color="#4da6ff"
-                onPress={() => navigation.navigate('CreateScheduleEvents', { event: item, scheduleId: item.scheduleId })}>
-                <LineText fontSize={16} marginRight={5} fontColor="#fff">
-                  Editar
-                </LineText>
-                <Icon name="edit" size={25} color="#fff"/>
-              </LineButton>
-            </Line>
-          )}
-        />
+                    <LineButton
+                      color="#4da6ff"
+                      onPress={() => navigation.navigate('CreateScheduleEvents', { event: item, scheduleId: item.scheduleId })}>
+                      <LineText fontSize={16} marginRight={5} fontColor="#fff">
+                        Editar
+                      </LineText>
+                      <Icon name="edit" size={25} color="#fff"/>
+                    </LineButton>
+                  </Line>
+                )}
+              />
 
-        <ButtonAdd
-          route="CreateScheduleEvents"
-          route_params={{
-            scheduleId: params.scheduleId
-          }}
-        />
+              <ButtonAdd
+                route="CreateScheduleEvents"
+                route_params={{
+                  scheduleId: params.scheduleId
+                }}
+              />
+            </>
+        }
       </ContainerFullHorizontal>
     </Background>
   );

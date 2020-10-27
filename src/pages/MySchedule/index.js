@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, ActivityIndicator } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 
 import { parseISO, format } from 'date-fns';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import api, { BASE_URL } from '../../services/api';
+import api from '../../services/api';
+import { PrimaryColor } from '../../styleGuide';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -15,6 +16,7 @@ import { LineColProvider } from './styles';
 
 function MySchedule() {
   const [myHours, setMyHours] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const isFocused = useIsFocused();
 
@@ -32,10 +34,14 @@ function MySchedule() {
           }))
         );
       }
+      setLoading(false);
     }
 
     if (isFocused) loadingMyHours();
-    else setMyHours([]);
+    else {
+      setMyHours([]);
+      setLoading(true);
+    }
   }, [isFocused]);
 
   function handleCancel(id) {
@@ -65,41 +71,48 @@ function MySchedule() {
   return (
     <Background>
       <ContainerFullHorizontal>
-        <List
-          data={myHours}
-          keyExtractor={item => String(item.id)}
-          renderItem={({item}) => (
-            <Line
-              key={String(item.id)}
-              height={80}
-            >
-              <LineRow>
-                <LineAvatar
-                  source={{uri: item.image_name}}
-                />
+        {
+          loading && isFocused ?
+            <ActivityIndicator size="large" color={PrimaryColor} />
+          :
+            <>
+              <List
+                data={myHours}
+                keyExtractor={item => String(item.id)}
+                renderItem={({item}) => (
+                  <Line
+                    key={String(item.id)}
+                    height={80}
+                  >
+                    <LineRow>
+                      <LineAvatar
+                        source={{uri: item.image_name}}
+                      />
 
-                <LineColProvider>
-                  <LineText width={180} fontSize={16} bold>
-                    {item.provider_name}
-                  </LineText>
-                  <LineText fontSize={14}>
-                    {item.timeFormat}
-                  </LineText>
-                  <LineText fontSize={12}>
-                    {item.dateFormat}
-                  </LineText>
-                </LineColProvider>
-              </LineRow>
+                      <LineColProvider>
+                        <LineText width={180} fontSize={16} bold>
+                          {item.provider_name}
+                        </LineText>
+                        <LineText fontSize={14}>
+                          {item.timeFormat}
+                        </LineText>
+                        <LineText fontSize={12}>
+                          {item.dateFormat}
+                        </LineText>
+                      </LineColProvider>
+                    </LineRow>
 
-              <LineButton color="#ff4d4d" onPress={() => handleCancel(item.id)}>
-                <LineText fontSize={16} marginRight={5} fontColor="#fff">
-                  Cancelar
-                </LineText>
-                <Icon name="clear" size={25} color="#fff"/>
-              </LineButton>
-            </Line>
-          )}
-        />
+                    <LineButton color="#ff4d4d" onPress={() => handleCancel(item.id)}>
+                      <LineText fontSize={16} marginRight={5} fontColor="#fff">
+                        Cancelar
+                      </LineText>
+                      <Icon name="clear" size={25} color="#fff"/>
+                    </LineButton>
+                  </Line>
+                )}
+              />
+            </>
+        }
       </ContainerFullHorizontal>
     </Background>
   );

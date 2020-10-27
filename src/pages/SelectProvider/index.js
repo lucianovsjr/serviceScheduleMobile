@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 
 import api, { BASE_URL } from '../../services/api';
+import { PrimaryColor } from '../../styleGuide';
 
 import Background from '../../components/Background';
 import Container from '../../components/Container';
@@ -12,7 +14,7 @@ import { CardColumnProvider } from './styles';
 
 function SelectProvider({navigation}) {
   const [providers, setProviders] = useState([]);
-  const [find, setFind] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const isFocused = useIsFocused();
 
@@ -29,38 +31,49 @@ function SelectProvider({navigation}) {
           })
         ));
       }
+      setLoading(false);
     }
 
     if (isFocused) loadingProviders();
-    else setProviders([]);
+    else {
+      setProviders([]);
+      setLoading(true);
+    }
   }, [isFocused])
 
   return (
     <Background>
       <Container>
-        <List
-          data={providers}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => (
-            <ButtonCard key={item.id} onPress={
-                () => navigation.navigate('SelectProviderMonth',
-                  {
-                    providerId: item.id,
-                    name: item.name,
-                    imageName: item.image_name
-                  }
-                )
-              }>
-              <CardAvatar
-                source={{uri: item.image_name}}
+        {
+          loading && isFocused ?
+            <ActivityIndicator size="large" color={PrimaryColor} />
+          :
+            <>
+              <List
+                data={providers}
+                keyExtractor={item => item.id}
+                renderItem={({item}) => (
+                  <ButtonCard key={item.id} onPress={
+                      () => navigation.navigate('SelectProviderMonth',
+                        {
+                          providerId: item.id,
+                          name: item.name,
+                          imageName: item.image_name
+                        }
+                      )
+                    }>
+                    <CardAvatar
+                      source={{uri: item.image_name}}
+                    />
+                    <CardColumnProvider>
+                      <CardTitle1>{item.fantasyName}</CardTitle1>
+                      <CardText1>{item.profession}</CardText1>
+                    </CardColumnProvider>
+                  </ButtonCard>
+                )}
               />
-              <CardColumnProvider>
-                <CardTitle1>{item.fantasyName}</CardTitle1>
-                <CardText1>{item.profession}</CardText1>
-              </CardColumnProvider>
-            </ButtonCard>
-          )}
-        />
+            </>
+        }
       </Container>
     </Background>
   );

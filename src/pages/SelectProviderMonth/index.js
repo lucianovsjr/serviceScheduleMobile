@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Alert } from 'react-native';
+import { Alert, ActivityIndicator } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api, { BASE_URL } from '../../services/api';
 import { hourFormat, dateFormat, dayWeekFormat, nameMonthFormat } from '../../mixen/reqFormat';
+import { PrimaryColor } from '../../styleGuide';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
@@ -26,10 +28,14 @@ export default function SelectProviderMonth({ navigation, route }) {
   const [appointmentsMonth, setAppointmentsMonth] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('0');
+  const [loadingTop, setLoadingTop] = useState(true);
+  const [loadingBottom, setLoadingBottom] = useState(false);
 
   const listBackgroundColor = useMemo(() =>
     appointments.length > 0 ? '#fff' : '#eee'
   , [appointments]);
+
+  const isFocused = useIsFocused();
 
   const { providerId, name, imageName } = route.params;
 
@@ -45,11 +51,16 @@ export default function SelectProviderMonth({ navigation, route }) {
           dateFormat: nameMonthFormat(data.date),
         })));
       }
+      setLoadingTop(false);
     }
-    loadingProviders();
-  }, [])
+
+    if (isFocused) {
+      loadingProviders();
+    } else setLoadingTop(true);
+  }, [isFocused])
 
   async function loadingAppointments(year, month, idDate) {
+    setLoadingBottom(true);
     const response = await api.get('appointments/months/', { params: { providerId, year, month } });
 
     if (response.status === 200) {
@@ -61,6 +72,7 @@ export default function SelectProviderMonth({ navigation, route }) {
       })))
       setSelectedMonth(idDate);
     }
+    setLoadingBottom(false);
   }
 
   function handleScheduling(id) {
@@ -99,81 +111,91 @@ export default function SelectProviderMonth({ navigation, route }) {
           <Avatar source={{uri: imageName}}/>
           <AvatarName>{name}</AvatarName>
 
-          <ListHorizontal
-            data={appointmentsMonth}
-            keyExtractor={item => item.date}
-            renderItem={({item}) => (
-              <ButtonCardMonth
-                key={item.date}
-                onPress={() => loadingAppointments(item.year, item.month, item.date)}
-                selected={selectedMonth===item.date}
-              >
-                <TextMonth>{item.dateFormat}</TextMonth>
-                <CardColumn>
-                  <TitleVacancies>Vagas</TitleVacancies>
-                  <TextVacancies>{item.vacancies_morning} Manhã</TextVacancies>
-                  <TextVacancies>{item.vacancies_afternoon} Tarde</TextVacancies>
-                  <TextVacancies>{item.vacancies_night} Noite</TextVacancies>
-                </CardColumn>
-              </ButtonCardMonth>
-            )}
-            height={'100'}
-          />
+          {
+            loadingTop && isFocused ?
+              <ActivityIndicator size="large" color={PrimaryColor} />
+            :
+              <ListHorizontal
+                data={appointmentsMonth}
+                keyExtractor={item => item.date}
+                renderItem={({item}) => (
+                  <ButtonCardMonth
+                    key={item.date}
+                    onPress={() => loadingAppointments(item.year, item.month, item.date)}
+                    selected={selectedMonth===item.date}
+                  >
+                    <TextMonth>{item.dateFormat}</TextMonth>
+                    <CardColumn>
+                      <TitleVacancies>Vagas</TitleVacancies>
+                      <TextVacancies>{item.vacancies_morning} Manhã</TextVacancies>
+                      <TextVacancies>{item.vacancies_afternoon} Tarde</TextVacancies>
+                      <TextVacancies>{item.vacancies_night} Noite</TextVacancies>
+                    </CardColumn>
+                  </ButtonCardMonth>
+                )}
+                height={'100'}
+              />
+          }
         </ContainerHeader>
 
         <ContainerList>
-          <List
-            data={appointments}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({item}) => (
-              <Line>
-                {item.status === 'available' || item.status === 'canceled'
-                  ? <>
-                      <LineCol>
-                        <LineText fontSize={16} marginLeft={15} fontColor="#000">
-                          {item.hourFormat}
-                        </LineText>
-                        <LineText fontSize={14} marginLeft={15} fontColor="#000">
-                          {item.dayWeek}
-                        </LineText>
-                        <LineText fontSize={10} marginLeft={15} fontColor="#000">
-                          {item.dateFormat}
-                        </LineText>
-                      </LineCol>
-                      <LineButton
-                        color="#00cc66"
-                        onPress={() => handleScheduling(item.id)}
-                      >
-                        <LineText fontSize={16} marginRight={5} fontColor="#fff">
-                          Agendar
-                        </LineText>
-                        <Icon name="done" size={25} color="#fff"/>
-                      </LineButton>
-                    </>
-                  : <>
-                      <LineCol>
-                        <LineText fontSize={16} marginLeft={15} fontColor="#A9A9A9">
-                          {item.hourFormat}
-                        </LineText>
-                        <LineText fontSize={14} marginLeft={15} fontColor="#A9A9A9">
-                          {item.dayWeek}
-                        </LineText>
-                        <LineText fontSize={10} marginLeft={15} fontColor="#A9A9A9">
-                          {item.dateFormat}
-                        </LineText>
-                      </LineCol>
-                      <LineRow>
-                        <LineText fontSize={16} marginRight={5} fontColor="#A9A9A9">
-                          Ocupado
-                        </LineText>
-                        <Icon name="work" size={25} color="#A9A9A9"/>
-                      </LineRow>
-                    </>
-                }
-              </Line>
-            )}
-            style={{flex:1, backgroundColor: listBackgroundColor}}
-          />
+          {
+            loadingBottom && isFocused ?
+              <ActivityIndicator size="large" color={PrimaryColor} />
+            :
+              <List
+                data={appointments}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({item}) => (
+                  <Line>
+                    {item.status === 'available' || item.status === 'canceled'
+                      ? <>
+                          <LineCol>
+                            <LineText fontSize={16} marginLeft={15} fontColor="#000">
+                              {item.hourFormat}
+                            </LineText>
+                            <LineText fontSize={14} marginLeft={15} fontColor="#000">
+                              {item.dayWeek}
+                            </LineText>
+                            <LineText fontSize={10} marginLeft={15} fontColor="#000">
+                              {item.dateFormat}
+                            </LineText>
+                          </LineCol>
+                          <LineButton
+                            color="#00cc66"
+                            onPress={() => handleScheduling(item.id)}
+                          >
+                            <LineText fontSize={16} marginRight={5} fontColor="#fff">
+                              Agendar
+                            </LineText>
+                            <Icon name="done" size={25} color="#fff"/>
+                          </LineButton>
+                        </>
+                      : <>
+                          <LineCol>
+                            <LineText fontSize={16} marginLeft={15} fontColor="#A9A9A9">
+                              {item.hourFormat}
+                            </LineText>
+                            <LineText fontSize={14} marginLeft={15} fontColor="#A9A9A9">
+                              {item.dayWeek}
+                            </LineText>
+                            <LineText fontSize={10} marginLeft={15} fontColor="#A9A9A9">
+                              {item.dateFormat}
+                            </LineText>
+                          </LineCol>
+                          <LineRow>
+                            <LineText fontSize={16} marginRight={5} fontColor="#A9A9A9">
+                              Ocupado
+                            </LineText>
+                            <Icon name="work" size={25} color="#A9A9A9"/>
+                          </LineRow>
+                        </>
+                    }
+                  </Line>
+                )}
+                style={{flex:1, backgroundColor: listBackgroundColor}}
+              />
+          }
         </ContainerList>
       </ContainerFullHorizontal>
     </Background>
