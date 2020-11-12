@@ -66,7 +66,8 @@ export default function MyCalendarAppointment() {
     const dateAdjusted = set(date, {
       hours: hoursStart.getHours(),
       minutes: hoursStart.getMinutes(),
-      seconds: hoursStart.getSeconds()
+      seconds: 0,
+      milliseconds: 0
     });
 
     const data = {
@@ -79,22 +80,29 @@ export default function MyCalendarAppointment() {
 
     if (idAppointment) {
       data.id = idAppointment;
-      const response = await api.put(`appointment/${idAppointment}/`, data);
+      try {
+        const response = await api.put(`appointment/${idAppointment}/`, data);
 
-      if (response.status === 200) {
-        alert('Salvo com sucesso');
-        navigation.goBack();
+        if (response.status === 200) {
+          alert('Salvo com sucesso');
+          navigation.goBack();
+        }
+      } catch (e) {
+        alert(e.response.data.msg);
       }
     } else {
       data.provider = user.id;
       data.schedule = null;
-      const response = await api.post('appointment/', data);
 
-      if (response.status === 201) {
-        alert('Agendamento criado com sucesso');
-        navigation.goBack();
-      } else {
-        alert(response.data.msg);
+      try {
+        const response = await api.post('appointment/', data);
+
+        if (response.status === 201) {
+          alert('Agendamento criado com sucesso');
+          navigation.goBack();
+        }
+      } catch (e) {
+        alert(e.response.data.msg);
       }
     }
   }

@@ -12,7 +12,7 @@ import { PrimaryColor } from '../../styleGuide';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
-import List, { ListHorizontal, Line, LineCol, LineText, LineButton } from '../../components/List';
+import List, {ListHorizontal, Line, LineCol, LineText, LineButton, LineRow} from '../../components/List';
 import { CardColumn } from '../../components/Card';
 import ButtonAdd from '../../components/ButtonAdd';
 
@@ -25,7 +25,7 @@ import {
   TextVacancies
 } from './styles';
 
-const DEFAULT_CLIENTE = 'Horário vago';
+const DEFAULT_CLIENTE = 'Horário livre';
 
 export default function MyCalendar() {
   const INIT_SELECTED_MONTH = '0'
@@ -120,7 +120,7 @@ export default function MyCalendar() {
               setAppointments(appointments.map((appointment) => {
                 return {
                   ...appointment,
-                  status: appointment.id === id ? 'available' : appointment.status,
+                  status: appointment.id === id ? 'schedule' : appointment.status,
                   loose_client: appointment.id === id ? DEFAULT_CLIENTE : appointment.loose_client
                 }
               }));
@@ -191,7 +191,7 @@ export default function MyCalendar() {
                       <LineText fontSize={16} marginLeft={15} fontColor="#000">
                           {item.looseClient}
                         </LineText>
-                      {item.status === 'available' || item.status === 'canceled'
+                      {item.status === 'schedule'
                         ? <>
                             <LineButton
                             color="#00cc66"
@@ -202,14 +202,23 @@ export default function MyCalendar() {
                               <Icon name="done" size={25} color="#fff"/>
                             </LineButton>
                           </>
-                        : <>
-                            <LineButton color="#ff4d4d" onPress={() => handleCancel(item.id)}>
-                              <LineText fontSize={16} marginRight={5} fontColor="#fff">
-                                Cancelar
-                              </LineText>
-                              <Icon name="clear" size={25} color="#fff"/>
-                            </LineButton>
-                          </>
+                        : item.status === 'cancel'
+                            ? <>
+                                <LineButton color="#ff4d4d" onPress={() => handleCancel(item.id)}>
+                                  <LineText fontSize={16} marginRight={5} fontColor="#fff">
+                                    Cancelar
+                                  </LineText>
+                                  <Icon name="clear" size={25} color="#fff"/>
+                                </LineButton>
+                              </>
+                            : <>
+                                <LineRow>
+                                  <LineText fontSize={16} marginRight={5} fontColor="#A9A9A9">
+                                    Ocupado
+                                  </LineText>
+                                  <Icon name="work" size={25} color="#A9A9A9"/>
+                                </LineRow>
+                              </>
                       }
                     </Line>
                   )}

@@ -94,7 +94,7 @@ export default function SelectProviderMonth({ navigation, route }) {
               setAppointments(appointments.map((appointment) => {
                 return {
                   ...appointment,
-                  status: appointment.id === id ? 'marked' : appointment.status
+                  status: appointment.id === id ? 'busy' : appointment.status
                 }
               }));
           }
@@ -148,7 +148,7 @@ export default function SelectProviderMonth({ navigation, route }) {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                   <Line>
-                    {item.status === 'available' || item.status === 'canceled'
+                    {item.status === 'schedule'
                       ? <>
                           <LineCol>
                             <LineText fontSize={16} marginLeft={15} fontColor="#000">
