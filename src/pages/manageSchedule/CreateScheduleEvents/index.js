@@ -3,18 +3,14 @@ import { Alert } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { parseISO } from 'date-fns';
 
-import api from '../../services/api';
-import { hourFormat, dateFormat } from '../../mixen/reqFormat';
+import api from '../../../services/api';
+import { hourFormat, dateFormat } from '../../../mixen/reqFormat';
 
-import Background from '../../components/Background';
-import { ContainerFullHorizontal } from '../../components/Container';
-import { Form, Line, TextButton } from '../../components/Form';
+import Background from '../../../components/Background';
+import { ContainerFullHorizontal } from '../../../components/Container';
+import { Form, Line, TextButton } from '../../../components/Form';
 
-import {
-  Submit,
-  Cancel,
-  Delete
-} from './styles';
+import { Submit, Cancel, Delete } from './styles';
 
 export default function CreateScheduleEvents() {
   const initWeek = [false, false, false, false, false, false, false];
@@ -37,8 +33,7 @@ export default function CreateScheduleEvents() {
         setTitle(params.event.name);
         if (params.event.week_days.includes(true))
           setSelectedWeek(params.event.week_days);
-        else
-          setDate(parseISO(params.event.date));
+        else setDate(parseISO(params.event.date));
         setHoursStart(hourFormat(params.event.hours_start, false, true));
         setHoursEnd(hourFormat(params.event.hours_end, false, true));
         setAllDay(params.event.allDay);
@@ -50,33 +45,37 @@ export default function CreateScheduleEvents() {
   }, []);
 
   useEffect(() => {
-    if (date.getFullYear() !== 1969 && selectedWeek.includes(true)) setSelectedWeek(initWeek);
+    if (date.getFullYear() !== 1969 && selectedWeek.includes(true))
+      setSelectedWeek(initWeek);
   }, [date]);
 
   useEffect(() => {
-    if (date.getFullYear() !== 1969 && selectedWeek.includes(true)) setDate(new Date(0));
+    if (date.getFullYear() !== 1969 && selectedWeek.includes(true))
+      setDate(new Date(0));
   }, [selectedWeek]);
 
   async function handleSubmit() {
     const data = {
       name: title,
       week: selectedWeek.reduce((accumlator, currentValor) => {
-        return `${accumlator}${currentValor ? '1' : '0'}`
+        return `${accumlator}${currentValor ? '1' : '0'}`;
       }, ''),
       date: dateFormat(date),
       hours_start: hourFormat(hoursStart),
       hours_end: hourFormat(hoursEnd),
       all_day: allDay,
-      schedule: params.scheduleId
+      schedule: params.scheduleId,
     };
 
-    const response = await (
-      isCreate
+    const response = await (isCreate
       ? api.post('events/', data)
-      : api.put(`events/${params.event.id}/`, data)
-    );
+      : api.put(`events/${params.event.id}/`, data));
 
-    if (response.status === 200 || response.status === 201 || response.status === 202)
+    if (
+      response.status === 200 ||
+      response.status === 201 ||
+      response.status === 202
+    )
       navigation.goBack();
     else alert('Erro');
   }
@@ -93,7 +92,7 @@ export default function CreateScheduleEvents() {
         {
           text: 'Não',
           onPress: () => {},
-          style: 'cancel'
+          style: 'cancel',
         },
         {
           text: 'Sim',
@@ -101,8 +100,8 @@ export default function CreateScheduleEvents() {
             const response = await api.delete(`events/${params.event.id}/`);
 
             if (response.status === 204) navigation.goBack();
-          }
-        }
+          },
+        },
       ],
       { cancelable: false }
     );

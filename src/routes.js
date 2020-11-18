@@ -7,13 +7,13 @@ import AuthRoutes from './routes/AuthRoutes';
 import AppRoutes from './routes/AppRoutes';
 
 function Routes() {
-  const signed = useSelector(state => state.auth.signed);
+  const signed = useSelector((state) => state.auth.signed);
 
   return (
     <NavigationContainer>
       <>
         <StatusBar barStyle="light-content" backgroundColor="#4289cb" />
-        { signed ? <AppRoutes /> : <AuthRoutes /> }
+        {signed ? <AppRoutes /> : <AuthRoutes />}
       </>
     </NavigationContainer>
   );

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import api from '../../services/api';
-import { dateFormat, hourFormat } from '../../mixen/reqFormat';
+import api from '../../../services/api';
+import { dateFormat, hourFormat } from '../../../mixen/reqFormat';
 
-import Background from '../../components/Background';
-import { ContainerFullHorizontal } from '../../components/Container';
-import { Form, Line, TextButton } from '../../components/Form';
+import Background from '../../../components/Background';
+import { ContainerFullHorizontal } from '../../../components/Container';
+import { Form, Line, TextButton } from '../../../components/Form';
 
 import { Submit, Cancel } from './styles';
 
@@ -22,11 +22,12 @@ export default function CreateScheduleGenerate({ navigation }) {
       date_end: dateFormat(dateEnd),
       hours_start: hourFormat(hoursStart),
       hours_end: hourFormat(hoursEnd),
-      time_range: timeRange
+      time_range: timeRange,
     });
 
-    switch(resSchedule.status) {
-      case 200: case 201:
+    switch (resSchedule.status) {
+      case 200:
+      case 201:
         navigation.goBack();
         break;
       case 202:
@@ -42,7 +43,7 @@ export default function CreateScheduleGenerate({ navigation }) {
   }
 
   return (
-    <Background >
+    <Background>
       <ContainerFullHorizontal>
         <Form>
           <Line
@@ -52,8 +53,8 @@ export default function CreateScheduleGenerate({ navigation }) {
             value1={dateStart}
             value2={dateEnd}
             setValue1={setDateStart}
-            setValue2={setDateEnd}>
-          </Line>
+            setValue2={setDateEnd}
+          ></Line>
 
           <Line
             icon="list"
@@ -62,8 +63,8 @@ export default function CreateScheduleGenerate({ navigation }) {
             value1={hoursStart}
             value2={hoursEnd}
             setValue1={setHoursStart}
-            setValue2={setHoursEnd}>
-          </Line>
+            setValue2={setHoursEnd}
+          ></Line>
 
           <Line
             icon="schedule"
@@ -71,8 +72,8 @@ export default function CreateScheduleGenerate({ navigation }) {
             autoCorrect={false}
             onChangeText={setTimeRange}
             keyboardType="number-pad"
-            value={timeRange}>
-          </Line>
+            value={timeRange}
+          ></Line>
 
           <Submit onPress={() => handleSubmit()}>
             <TextButton>Salvar</TextButton>

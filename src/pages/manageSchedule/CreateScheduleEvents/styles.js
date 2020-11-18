@@ -1,6 +1,10 @@
 import styled from 'styled-components/native';
 
-import { SaveButton, CancelButton, DeleteButton } from '../../components/Form';
+import {
+  SaveButton,
+  CancelButton,
+  DeleteButton,
+} from '../../../components/Form';
 
 export const Submit = styled(SaveButton)`
   margin-top: 15px;

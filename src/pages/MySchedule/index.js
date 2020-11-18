@@ -10,7 +10,13 @@ import { PrimaryColor } from '../../styleGuide';
 
 import Background from '../../components/Background';
 import { ContainerFullHorizontal } from '../../components/Container';
-import List, { Line, LineRow, LineText, LineButton, LineAvatar } from '../../components/List';
+import List, {
+  Line,
+  LineRow,
+  LineText,
+  LineButton,
+  LineAvatar,
+} from '../../components/List';
 
 import { LineColProvider } from './styles';
 
@@ -52,7 +58,7 @@ function MySchedule() {
         {
           text: 'Não',
           onPress: () => {},
-          style: 'cancel'
+          style: 'cancel',
         },
         {
           text: 'Sim',
@@ -61,8 +67,8 @@ function MySchedule() {
 
             if (response.status === 200)
               setMyHours(myHours.filter((hour) => hour.id !== id));
-          }
-        }
+          },
+        },
       ],
       { cancelable: false }
     );
@@ -71,48 +77,41 @@ function MySchedule() {
   return (
     <Background>
       <ContainerFullHorizontal>
-        {
-          loading && isFocused ?
-            <ActivityIndicator size="large" color={PrimaryColor} />
-          :
-            <>
-              <List
-                data={myHours}
-                keyExtractor={item => String(item.id)}
-                renderItem={({item}) => (
-                  <Line
-                    key={String(item.id)}
-                    height={80}
-                  >
-                    <LineRow>
-                      <LineAvatar
-                        source={{uri: item.image_name}}
-                      />
+        {loading && isFocused ? (
+          <ActivityIndicator size="large" color={PrimaryColor} />
+        ) : (
+          <>
+            <List
+              data={myHours}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => (
+                <Line key={String(item.id)} height={80}>
+                  <LineRow>
+                    <LineAvatar source={{ uri: item.image_name }} />
 
-                      <LineColProvider>
-                        <LineText width={180} fontSize={16} bold>
-                          {item.provider_name}
-                        </LineText>
-                        <LineText fontSize={14}>
-                          {item.timeFormat}
-                        </LineText>
-                        <LineText fontSize={12}>
-                          {item.dateFormat}
-                        </LineText>
-                      </LineColProvider>
-                    </LineRow>
-
-                    <LineButton color="#ff4d4d" onPress={() => handleCancel(item.id)}>
-                      <LineText fontSize={16} marginRight={5} fontColor="#fff">
-                        Cancelar
+                    <LineColProvider>
+                      <LineText width={180} fontSize={16} bold>
+                        {item.provider_name}
                       </LineText>
-                      <Icon name="clear" size={25} color="#fff"/>
-                    </LineButton>
-                  </Line>
-                )}
-              />
-            </>
-        }
+                      <LineText fontSize={14}>{item.timeFormat}</LineText>
+                      <LineText fontSize={12}>{item.dateFormat}</LineText>
+                    </LineColProvider>
+                  </LineRow>
+
+                  <LineButton
+                    color="#ff4d4d"
+                    onPress={() => handleCancel(item.id)}
+                  >
+                    <LineText fontSize={16} marginRight={5} fontColor="#fff">
+                      Cancelar
+                    </LineText>
+                    <Icon name="clear" size={25} color="#fff" />
+                  </LineButton>
+                </Line>
+              )}
+            />
+          </>
+        )}
       </ContainerFullHorizontal>
     </Background>
   );

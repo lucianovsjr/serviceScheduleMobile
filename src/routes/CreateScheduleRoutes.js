@@ -1,10 +1,10 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import CreateSchedule from '../pages/CreateSchedule';
-import CreateScheduleGenerate from '../pages/CreateScheduleGenerate';
-import CreateScheduleEvents from '../pages/CreateScheduleEvents';
-import ScheduleEvents from '../pages/ScheduleEvents.';
+import CreateSchedule from '../pages/manageSchedule/CreateSchedule';
+import CreateScheduleGenerate from '../pages/manageSchedule/CreateScheduleGenerate';
+import CreateScheduleEvents from '../pages/manageSchedule/CreateScheduleEvents';
+import ScheduleEvents from '../pages/manageSchedule/ScheduleEvents.';
 
 const Stack = createStackNavigator();
 
@@ -19,8 +19,8 @@ function SelectRoutes() {
           headerTitleAlign: 'center',
           headerTintColor: '#eee',
           headerStyle: {
-            backgroundColor: '#4289cb'
-          }
+            backgroundColor: '#4289cb',
+          },
         }}
       />
       <Stack.Screen
@@ -31,8 +31,8 @@ function SelectRoutes() {
           headerTitleAlign: 'center',
           headerTintColor: '#eee',
           headerStyle: {
-            backgroundColor: '#4289cb'
-          }
+            backgroundColor: '#4289cb',
+          },
         }}
       />
       <Stack.Screen
@@ -43,8 +43,8 @@ function SelectRoutes() {
           headerTitleAlign: 'center',
           headerTintColor: '#eee',
           headerStyle: {
-            backgroundColor: '#4289cb'
-          }
+            backgroundColor: '#4289cb',
+          },
         }}
       />
       <Stack.Screen
@@ -55,8 +55,8 @@ function SelectRoutes() {
           headerTitleAlign: 'center',
           headerTintColor: '#eee',
           headerStyle: {
-            backgroundColor: '#4289cb'
-          }
+            backgroundColor: '#4289cb',
+          },
         }}
       />
     </Stack.Navigator>

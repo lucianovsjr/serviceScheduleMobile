@@ -1,7 +1,6 @@
 import { RectButton } from 'react-native-gesture-handler';
 
 import styled from 'styled-components/native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export const MyScheduleList = styled.FlatList.attrs({
   numColumns: 1,
