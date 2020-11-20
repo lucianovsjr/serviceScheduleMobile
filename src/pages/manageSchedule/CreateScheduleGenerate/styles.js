@@ -1,10 +1,13 @@
 import styled from 'styled-components';
-import { RectButton } from 'react-native-gesture-handler';
 
 import Input from '../../../components/Input';
 import DoubleInputDateTime from '../../../components/DoubleInputDateTime';
 
-import { SaveButton, CancelButton } from '../../../components/Form';
+import {
+  SaveButton,
+  CancelButton,
+  DeleteButton,
+} from '../../../components/Form';
 
 export const FormInput = styled(Input)`
   margin-bottom: 10px;
@@ -20,4 +23,8 @@ export const Submit = styled(SaveButton)`
 
 export const Cancel = styled(CancelButton)`
   margin-top: 5px;
+`;
+
+export const Delete = styled(DeleteButton)`
+  margin-top: 20px;
 `;

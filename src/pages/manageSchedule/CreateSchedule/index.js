@@ -37,6 +37,8 @@ export default function CreateSchedule() {
       if (response.status === 200) {
         const resSchedules = response.data.map((schedule) => ({
           id: schedule.id.toString(),
+          date_start: schedule.date_start,
+          date_end: schedule.date_end,
           dateStart: dateFormat(schedule.date_start, false),
           dateEnd: dateFormat(schedule.date_end, false),
           hoursStart: hourFormat(schedule.hours_start, false),
@@ -89,7 +91,11 @@ export default function CreateSchedule() {
                     <LineButton
                       color="#4da6ff"
                       marginBottom={10}
-                      onPress={() => {}}
+                      onPress={() =>
+                        navigation.navigate('CreateScheduleGenerate', {
+                          schedule: item,
+                        })
+                      }
                     >
                       <LineText fontSize={16} marginRight={5} fontColor="#fff">
                         Editar
