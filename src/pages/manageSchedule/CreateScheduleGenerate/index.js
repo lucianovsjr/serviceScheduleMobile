@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 
 import api from '../../../services/api';
@@ -53,10 +54,19 @@ export default function CreateScheduleGenerate() {
         navigation.goBack();
         break;
       case 202:
-        alert(resSchedule.data.msg);
+        Alert.alert(resSchedule.data.msg);
         break;
       default:
-        alert('Erro', resSchedule.data.msg);
+        Alert.alert('Erro', resSchedule.data.msg);
+    }
+  }
+
+  async function handleDelete() {
+    if (schedule) {
+      const resSchedule = await api.delete(`schedules/${schedule.id}/`);
+
+      if (resSchedule.status === 204) navigation.goBack();
+      else Alert.alert('Erro', resSchedule.data.msg);
     }
   }
 
@@ -106,7 +116,7 @@ export default function CreateScheduleGenerate() {
           </Cancel>
 
           {schedule && (
-            <Delete onPress={() => alert('delete')}>
+            <Delete onPress={() => handleDelete()}>
               <TextButton>Excluir</TextButton>
             </Delete>
           )}
