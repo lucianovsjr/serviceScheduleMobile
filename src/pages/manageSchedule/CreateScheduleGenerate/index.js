@@ -105,6 +105,7 @@ export default function CreateScheduleGenerate() {
             onChangeText={setTimeRange}
             keyboardType="number-pad"
             value={timeRange}
+            editable={!schedule}
           />
 
           <Submit onPress={() => handleSubmit()}>
