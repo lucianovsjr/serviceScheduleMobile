@@ -219,6 +219,11 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    compile project(':react-native-push-notification')
+    compile ('com.google.android.gms:play-services-gcm:+') {
+        force = true;
+    }
 }
 
 // Run this once to be able to run the application with BUCK

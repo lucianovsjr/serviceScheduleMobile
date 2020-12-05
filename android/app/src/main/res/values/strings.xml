@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">serviceScheduleMobile</string>
+    <string name="app_name">Week Calendar</string>
+    <string name="default_notification_channel_id">weekcalendar</string>
 </resources>

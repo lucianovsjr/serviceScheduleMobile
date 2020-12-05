@@ -7,6 +7,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import Routes from './routes';
 import { store, persistor } from './store';
 
+// import './services/notification';
+import './services/backgroundTimer';
+
 const App = () => {
   return (
     <>
